@@ -4,7 +4,7 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
 Vue.prototype.$http = axios
-const host = 'http://localhost:811/'
+const host = 'https://api.cruii.io/bilibili/'
 axios.defaults.baseURL = host
 
 Vue.config.productionTip = false
