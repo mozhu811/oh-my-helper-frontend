@@ -16,8 +16,8 @@
 
     <div class="mt-5">
       <v-row>
-        <v-col cols="3" xl="3" md="4" v-for="(item, i) in items" :key="i">
-          <container-card :item="item"></container-card>
+        <v-col cols="12" sm="6" md="6" lg="4" xl="3" v-for="(item, i) in items" :key="i">
+          <card :item="item"></card>
         </v-col>
       </v-row>
     </div>
@@ -28,17 +28,18 @@
       <v-progress-circular
         indeterminate
         size="100"
-      >Loading...</v-progress-circular>
+      >Loading...
+      </v-progress-circular>
     </v-overlay>
   </v-container>
 </template>
 
 <script>
-import ContainerCard from '@/components/ContainerCard'
+import Card from '@/components/Card'
 import HelloWorld from '@/components/HelloWorld'
 export default {
   components: {
-    ContainerCard,
+    Card,
     HelloWorld
   },
   created () {
@@ -47,7 +48,13 @@ export default {
   data () {
     return {
       items: [],
-      overlay: false
+      overlay: false,
+      sessdata: '',
+      valid: false,
+      dialog: true,
+      rules: {
+        required: value => !!value || 'Required.'
+      }
     }
   },
   methods: {
