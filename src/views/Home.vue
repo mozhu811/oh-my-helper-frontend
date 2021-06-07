@@ -31,6 +31,53 @@
       >Loading...
       </v-progress-circular>
     </v-overlay>
+
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="600px"
+    >
+      <!--      <template v-slot:activator="{ on, attrs }">-->
+      <!--        <v-btn-->
+      <!--          color="primary"-->
+      <!--          dark-->
+      <!--          v-bind="attrs"-->
+      <!--          v-on="on"-->
+      <!--        >-->
+      <!--          Open Dialog-->
+      <!--        </v-btn>-->
+      <!--      </template>-->
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">身份验证</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form
+            ref="form"
+            v-model="valid"
+            lazy-validation
+          >
+            <v-text-field
+              v-model="sessdata"
+              :rules="[rules.required]"
+              label="SESSDATA"
+              placeholder="请填入B站Cookie中SESSDATA的值"
+              required
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="submitSessData"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -43,6 +90,7 @@ export default {
     HelloWorld
   },
   created () {
+    this.dialog = localStorage.getItem('sessdata') === null
     this.listFunctions()
   },
   data () {
@@ -65,6 +113,14 @@ export default {
       }).finally(() => {
         this.overlay = false
       })
+    },
+    submitSessData () {
+      const valid = this.$refs.form.validate()
+      if (valid) {
+        localStorage.setItem('sessdata', this.sessdata)
+        this.dialog = false
+        this.listFunctions()
+      }
     }
   }
 }
