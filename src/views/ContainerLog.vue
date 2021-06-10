@@ -56,7 +56,7 @@ export default {
       const start = end - 86400000
       this.$http.get(`logs?dedeuserid=${this.dedeuserid}&start=${start}&end=${end}`).then(res => {
         res.data.forEach(log => {
-          this.logText = this.logText + '\n' + log.logTime + '——' + log.level + '：' + log.message
+          this.logText = this.logText + '\n' + log
         })
       }).finally(() => {
         this.overlay = false
