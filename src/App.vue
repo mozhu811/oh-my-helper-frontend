@@ -53,10 +53,10 @@ export default {
 
   data: () => ({
     icons: [
-      'mdi-facebook',
+      'mdi-qqchat',
       'mdi-twitter',
-      'mdi-linkedin',
-      'mdi-instagram'
+      'mdi-sina-weibo',
+      'mdi-telegram'
     ]
   })
 }
