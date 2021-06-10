@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import FunctionLog from '@/views/FunctionLog'
+import ContainerLog from '@/views/ContainerLog'
 Vue.use(VueRouter)
 
 const routes = [
@@ -13,7 +13,7 @@ const routes = [
   {
     path: '/logs',
     name: 'logs',
-    component: FunctionLog
+    component: ContainerLog
   }
 ]
 
