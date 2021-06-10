@@ -22,7 +22,7 @@
               rounded
               small
               :disabled="!activeLogBtn"
-              @click="goLogPage(item.dedeuserid)"
+              @click="goLogPage(item.dedeUserId)"
             >
               查看日志
             </v-btn>
@@ -30,7 +30,7 @@
         </div>
 
         <v-badge
-          :value="item.vipType"
+          :value="item.isVip"
           avatar
           bordered
           bottom
@@ -58,7 +58,6 @@
 import md5 from '../assets/lib/md5.min.js'
 
 export default {
-  name: 'ContainerCard',
   props: {
     item: Object
   },
@@ -78,12 +77,18 @@ export default {
   },
   computed: {
     cardContent: function () {
-      return '当前经验：' + '<b>' + this.item.currentExp + '</b>' + '<br>' + ' 升级还需：' + '<b>' + (this.item.nextExp - this.item.currentExp) + '</b>'
+      return '当前经验：' + '<b>' + this.item.currentExp + '</b>' +
+        '<br>' +
+        ' 升级还需：' + '<b>' + this.item.diffExp + '</b>'
     },
     activeLogBtn: function () {
-      const sessdata = localStorage.getItem('sessdata')
-      const key = md5(sessdata)
-      return key === this.item.key
+      const sessData = this.getCookie('sessData')
+      if (sessData) {
+        const escape = sessData.replaceAll('%2C', ',')
+        const key = md5(escape)
+        return key === this.item.key
+      }
+      return false
     }
   }
 }
