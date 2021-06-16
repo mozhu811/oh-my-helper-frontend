@@ -10,7 +10,7 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/Cruii/bilibili-helper-hub-frontend?style=for-the-badge)](https://github.com/Cruii/bilibili-helper-hub-frontend/graphs/contributors)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Cruii/bilibili-helper-hub-frontend?style=for-the-badge)
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCruii%2Fbilibili-helper-hub.svg?type=for-the-badge)](https://app.fossa.com/projects/git%2Bgithub.com%2FCruii%2Fbilibili-helper-hub?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCruii%2Fbilibili-helper-hub-frontend.svg?type=for-the-badge)](https://app.fossa.com/projects/git%2Bgithub.com%2FCruii%2Fbilibili-helper-hub?ref=badge_shield)
 </div>
 
 📺 [Bilibili Helper Hub](https://github.com/Cruii/bilibili-helper-hub) 的前端项目
