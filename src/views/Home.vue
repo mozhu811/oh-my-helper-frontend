@@ -410,7 +410,7 @@ export default {
       dedeuserid: '',
       biliJct: '',
       valid: false,
-      cookieDialogVisible: true,
+      cookieDialogVisible: false,
       createContainerDialogVisible: false,
       rules: {
         required: value => value !== null || 'Required.',
