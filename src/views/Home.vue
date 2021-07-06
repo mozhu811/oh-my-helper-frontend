@@ -146,7 +146,35 @@
                   ></v-select>
                 </v-col>
               </v-row>
-
+              <v-row>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="createContainerModel.config.sessdata"
+                    :rules="[rules.required]"
+                    label="SESSDATA"
+                    placeholder="请填入B站Cookie中SESSDATA的值"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="dedeuserid"
+                    :rules="[rules.required]"
+                    label="DEDEUSERID"
+                    placeholder="请填入B站Cookie中DedeUserID的值"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col md="4">
+                  <v-text-field
+                    v-model="biliJct"
+                    :rules="[rules.required]"
+                    label="BILIJCT"
+                    placeholder="请填入B站Cookie中bili_jct的值"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
               <v-row>
                 <v-col
                   cols="6"
@@ -403,6 +431,9 @@ export default {
         containerName: null,
         description: null,
         config: {
+          sessdata: null,
+          dedeuserid: null,
+          biliJct: null,
           taskIntervalTime: 10,
           numberOfCoins: 5,
           reserveCoins: 50,
