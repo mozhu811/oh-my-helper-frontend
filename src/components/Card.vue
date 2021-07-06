@@ -82,9 +82,9 @@ export default {
         ' 升级还需：' + '<b>' + this.item.diffExp + '</b>'
     },
     activeLogBtn: function () {
-      const sessData = this.getCookie('sessData')
-      if (sessData) {
-        const escape = sessData.replaceAll('%2C', ',')
+      const sessdata = this.getCookie('sessdata')
+      if (sessdata) {
+        const escape = sessdata.replaceAll('%2C', ',')
         const key = md5(escape)
         return key === this.item.key
       }
