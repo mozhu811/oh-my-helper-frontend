@@ -506,7 +506,9 @@ export default {
       const valid = this.$refs.createContainerForm.validate()
       if (valid) {
         this.createContainerLoading = true
-        this.createContainerModel.description = this.getCookie('dedeUserId')
+        this.createContainerModel.description = [this.getCookie('dedeuserid'),
+          this.getCookie('sessdata'),
+          this.getCookie('biliJct')].join(';')
         this.$http.post('containers', this.createContainerModel).then(res => {
           this.snackbarMsg = '创建成功'
           this.snackbar = true
