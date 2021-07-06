@@ -9,24 +9,13 @@
         <div>
           <v-card-title
             class="text-h5"
-            v-text="item.username"
+            v-text="item.username || 'null'"
           ></v-card-title>
 
-          <v-card-subtitle v-text="'硬币: ' + item.coins + ' 等级: LV' + item.level"></v-card-subtitle>
+          <v-card-subtitle v-if="item.isLogin" v-text="'硬币: ' + item.coins + ' 等级: LV' + item.level"></v-card-subtitle>
+          <v-card-subtitle v-else v-text="'用户Cookie已失效'"></v-card-subtitle>
           <v-card-text v-html="cardContent"></v-card-text>
 
-          <v-card-actions>
-            <v-btn
-              class="ml-2 mt-5 mb-2"
-              outlined
-              rounded
-              small
-              :disabled="!activeLogBtn"
-              @click="goLogPage(item.dedeUserId)"
-            >
-              查看日志
-            </v-btn>
-          </v-card-actions>
         </div>
 
         <v-badge
@@ -36,7 +25,7 @@
           bottom
           class="ma-3"
           offset-x="30"
-          offset-y="95"
+          offset-y="30"
         >
           <template v-slot:badge>
             <v-avatar>
@@ -50,6 +39,52 @@
           </v-avatar>
         </v-badge>
       </div>
+      <v-card-actions>
+        <v-btn
+          class="ml-2 mt-5"
+          outlined
+          rounded
+          small
+          :disabled="!activeLogBtn"
+          @click="goLogPage(item.dedeuserid)"
+        >
+          查看日志
+        </v-btn>
+        <v-spacer></v-spacer>
+<!--        <v-menu offset-y>-->
+<!--          <template v-slot:activator="{ on, attrs }">-->
+<!--            <v-btn-->
+<!--              color="primary lighten-1"-->
+<!--              elevation="0"-->
+<!--              class="ml-2 mt-5"-->
+<!--              fab-->
+<!--              small-->
+<!--              v-bind="attrs"-->
+<!--              v-on="on"-->
+<!--              :disabled="!activeLogBtn"-->
+<!--            >-->
+<!--              <v-icon dark>-->
+<!--                mdi-cog-outline-->
+<!--              </v-icon>-->
+<!--            </v-btn>-->
+<!--          </template>-->
+<!--          <v-list flat>-->
+<!--            <v-list-item-group-->
+<!--              v-model="selectedItem"-->
+<!--            >-->
+<!--              <v-list-item-->
+<!--                v-for="(item, index) in menuList"-->
+<!--                :key="index"-->
+<!--              >-->
+<!--                <v-list-item-content>-->
+<!--                  <v-list-item-title>{{ item }}</v-list-item-title>-->
+<!--                </v-list-item-content>-->
+<!--              </v-list-item>-->
+<!--            </v-list-item-group>-->
+<!--          </v-list>-->
+<!--        </v-menu>-->
+      </v-card-actions>
+
     </v-card>
   </div>
 </template>
@@ -63,6 +98,10 @@ export default {
   },
   data () {
     return {
+      selectedItem: '',
+      menuList: [
+        '重新部署'
+      ]
     }
   },
   methods: {
