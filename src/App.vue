@@ -56,7 +56,7 @@ export default {
       'mdi-qqchat',
       'mdi-twitter',
       'mdi-sina-weibo',
-      'mdi-telegram'
+      'mdi-github'
     ]
   })
 }
