@@ -15,6 +15,20 @@
       </v-icon>
     </v-btn>
 
+    <v-btn
+      v-show="!overlay"
+      class="mx-2"
+      fab
+      dark
+      color="warning"
+      elevation="10"
+      @click.stop="cookieDialogVisible = true"
+    >
+      <v-icon dark>
+        mdi-square-edit-outline
+      </v-icon>
+    </v-btn>
+
     <div class="mt-5">
       <v-row>
         <v-col cols="12" sm="6" md="6" lg="4" xl="3" v-for="(item, i) in items" :key="i">
@@ -40,7 +54,7 @@
     >
       <v-card>
         <v-card-title>
-          <span class="text-h5">身份验证</span>
+          <span class="text-h5">设置Cookie</span>
         </v-card-title>
         <v-card-text>
           <v-form
@@ -75,9 +89,15 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
+            text
+            @click="cookieDialogVisible = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
             color="blue darken-1"
             text
-            @click="setCookies"
+            @click="updateCookies"
           >
             Save
           </v-btn>
@@ -85,6 +105,7 @@
       </v-card>
     </v-dialog>
 
+    <!-- 创建容器配置对话框 -->
     <v-dialog
       v-model="createContainerDialogVisible"
       persistent
@@ -415,6 +436,21 @@ export default {
         this.items = res.data
       }).finally(() => {
         this.overlay = false
+      })
+    },
+    updateCookies () {
+      this.$http.put('containers/cookies',
+        {
+          dedeuserid: this.dedeuserid,
+          sessdata: this.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*'),
+          biliJct: this.biliJct
+        }).then(res => {
+        this.setCookies()
+        this.snackbarMsg = '更新成功'
+        this.snackbar = true
+      }).finally(() => {
+        this.cookieDialogVisible = false
+        this.listContainers()
       })
     },
     setCookies () {
