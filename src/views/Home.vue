@@ -402,6 +402,9 @@ export default {
       snackbarMsg: '',
       snackbar: false,
       items: [],
+      sessdata: null,
+      dedeuserid: null,
+      biliJct: null,
       overlay: false,
       sessdata: '',
       dedeuserid: '',
@@ -483,8 +486,8 @@ export default {
         const d = new Date()
         d.setTime(d.getTime() + (9999 * 24 * 60 * 60 * 1000))
         const expires = 'expires=' + d.toGMTString()
-        document.cookie = 'dedeUserId' + '=' + this.dedeuserid + '; ' + expires + ';domain=.cruii.io'
-        document.cookie = 'sessData' + '=' + this.sessdata + '; ' + expires + ';domain=.cruii.io'
+        document.cookie = 'dedeuserid' + '=' + this.dedeuserid + '; ' + expires + ';domain=.cruii.io'
+        document.cookie = 'sessdata' + '=' + this.sessdata + '; ' + expires + ';domain=.cruii.io'
         document.cookie = 'biliJct' + '=' + this.biliJct + '; ' + expires + ';domain=.cruii.io'
         this.cookieDialogVisible = false
         this.listContainers()
