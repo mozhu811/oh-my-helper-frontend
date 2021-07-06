@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <hello-world/>
     <v-btn
       v-show="!overlay"
       class="mx-2"
@@ -361,18 +360,12 @@
 
 <script>
 import Card from '@/components/Card'
-import HelloWorld from '@/components/HelloWorld'
 
 export default {
   components: {
-    Card,
-    HelloWorld
+    Card
   },
   created () {
-    const cookies = [this.getCookie('sessData'),
-      this.getCookie('dedeUserId'),
-      this.getCookie('biliJct')]
-    this.cookieDialogVisible = cookies.includes(null)
     this.listContainers()
   },
   data () {
