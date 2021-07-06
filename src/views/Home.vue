@@ -377,6 +377,7 @@
 
     <v-snackbar
       v-model="snackbar"
+      color="primary"
       top
       app
       :timeout="2000"
