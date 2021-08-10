@@ -46,6 +46,7 @@
       </v-progress-circular>
     </v-overlay>
 
+    <!-- 更新Cookie对话框 -->
     <v-dialog
       v-model="cookieDialogVisible"
       persistent
@@ -53,7 +54,7 @@
     >
       <v-card>
         <v-card-title>
-          <span class="text-h5">设置Cookie</span>
+          <span class="text-h5">更新Cookie</span>
         </v-card-title>
         <v-card-text>
           <v-form
@@ -96,6 +97,8 @@
           <v-btn
             color="blue darken-1"
             text
+            :loading="updateCookieLoading"
+            :disabled="updateCookieLoading"
             @click="updateCookies"
           >
             Save
@@ -158,7 +161,7 @@
                 </v-col>
                 <v-col md="4">
                   <v-text-field
-                    v-model="dedeuserid"
+                    v-model="createContainerModel.config.dedeuserid"
                     :rules="[rules.required]"
                     label="DEDEUSERID"
                     placeholder="请填入B站Cookie中DedeUserID的值"
@@ -167,7 +170,7 @@
                 </v-col>
                 <v-col md="4">
                   <v-text-field
-                    v-model="biliJct"
+                    v-model="createContainerModel.config.biliJct"
                     :rules="[rules.required]"
                     label="BILIJCT"
                     placeholder="请填入B站Cookie中bili_jct的值"
@@ -274,7 +277,7 @@
                   cols="6"
                   sm="6"
                   md="5"
-                  >
+                >
                   <v-select
                     :items="coinAddPriorities"
                     label="投币策略"
@@ -350,6 +353,19 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col
+                  cols="6"
+                  sm="4"
+                  md="4">
+                  <v-text-field
+                    label="电子邮箱"
+                    :rules="[rules.required]"
+                    hint="此邮箱用于Cookie失效通知"
+                    v-model="createContainerModel.config.email"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
             </v-container>
           </v-form>
         </v-card-text>
@@ -400,6 +416,7 @@ export default {
   data () {
     return {
       createContainerLoading: false,
+      updateCookieLoading: false,
       snackbarMsg: '',
       snackbar: false,
       items: [],
@@ -419,13 +436,25 @@ export default {
         'ios', 'android'
       ],
       coinAddPriorities: [
-        { id: 0, name: '优先给热榜视频投币' },
-        { id: 1, name: '优先给关注的UP主投币' }
+        {
+          id: 0,
+          name: '优先给热榜视频投币'
+        },
+        {
+          id: 1,
+          name: '优先给关注的UP主投币'
+        }
       ],
       needPush: false,
       pushPriorities: [
-        { id: 0, name: 'Server酱Turbo' },
-        { id: 1, name: 'Telegram' }
+        {
+          id: 0,
+          name: 'Server酱Turbo'
+        },
+        {
+          id: 1,
+          name: 'Telegram'
+        }
       ],
       pushPriority: null,
       createContainerModel: {
@@ -449,7 +478,8 @@ export default {
           skipDailyTask: false,
           telegrambottoken: null,
           telegramchatid: null,
-          serverpushkey: null
+          serverpushkey: null,
+          email: null
         }
       }
     }
@@ -464,6 +494,7 @@ export default {
       })
     },
     updateCookies () {
+      this.updateCookieLoading = true
       this.$http.put('containers/cookies',
         {
           dedeuserid: this.dedeuserid,
@@ -474,6 +505,7 @@ export default {
         this.snackbarMsg = '更新成功'
         this.snackbar = true
       }).finally(() => {
+        this.updateCookieLoading = false
         this.cookieDialogVisible = false
         this.listContainers()
       })
@@ -487,8 +519,10 @@ export default {
         document.cookie = 'dedeuserid' + '=' + this.dedeuserid + '; ' + expires + ';domain=.cruii.io'
         document.cookie = 'sessdata' + '=' + this.sessdata + '; ' + expires + ';domain=.cruii.io'
         document.cookie = 'biliJct' + '=' + this.biliJct + '; ' + expires + ';domain=.cruii.io'
+        // document.cookie = 'dedeuserid' + '=' + this.dedeuserid + '; ' + expires
+        // document.cookie = 'sessdata' + '=' + this.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*') + '; ' + expires
+        // document.cookie = 'biliJct' + '=' + this.biliJct + '; ' + expires
         this.cookieDialogVisible = false
-        this.listContainers()
       }
     },
     getCookie (cname) {
@@ -504,9 +538,12 @@ export default {
       const valid = this.$refs.createContainerForm.validate()
       if (valid) {
         this.createContainerLoading = true
-        this.createContainerModel.description = [this.getCookie('dedeuserid'),
-          this.getCookie('sessdata'),
-          this.getCookie('biliJct')].join(';')
+        // this.createContainerModel.description = [this.getCookie('dedeuserid'),
+        //   this.getCookie('sessdata'),
+        //   this.getCookie('biliJct')].join(';')
+        this.createContainerModel.description = [this.createContainerModel.config.dedeuserid,
+          this.createContainerModel.config.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*'),
+          this.createContainerModel.config.biliJct].join(';')
         this.$http.post('containers', this.createContainerModel).then(res => {
           this.snackbarMsg = '创建成功'
           this.snackbar = true
