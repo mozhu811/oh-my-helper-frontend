@@ -150,35 +150,6 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col md="4">
-                  <v-text-field
-                    v-model="createContainerModel.config.sessdata"
-                    :rules="[rules.required]"
-                    label="SESSDATA"
-                    placeholder="请填入B站Cookie中SESSDATA的值"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col md="4">
-                  <v-text-field
-                    v-model="createContainerModel.config.dedeuserid"
-                    :rules="[rules.required]"
-                    label="DEDEUSERID"
-                    placeholder="请填入B站Cookie中DedeUserID的值"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col md="4">
-                  <v-text-field
-                    v-model="createContainerModel.config.biliJct"
-                    :rules="[rules.required]"
-                    label="BILIJCT"
-                    placeholder="请填入B站Cookie中bili_jct的值"
-                    required
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row>
                 <v-col
                   cols="6"
                 >
@@ -518,15 +489,6 @@ export default {
         this.$cookies.set('biliJct', this.biliJct, 60 * 60 * 24 * 31 * 12)
         this.cookieDialogVisible = false
       }
-    },
-    getCookie (cname) {
-      const name = cname + '='
-      const ca = document.cookie.split(';')
-      for (let i = 0; i < ca.length; i++) {
-        const c = ca[i].trim()
-        if (c.indexOf(name) === 0) return c.substring(name.length, c.length)
-      }
-      return null
     },
     createContainer () {
       const valid = this.$refs.createContainerForm.validate()
