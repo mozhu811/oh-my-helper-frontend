@@ -513,15 +513,9 @@ export default {
     setCookies () {
       const valid = this.$refs.inputCookieForm.validate()
       if (valid) {
-        const d = new Date()
-        d.setTime(d.getTime() + (9999 * 24 * 60 * 60 * 1000))
-        const expires = 'expires=' + d.toGMTString()
-        document.cookie = 'dedeuserid' + '=' + this.dedeuserid + '; ' + expires + ';domain=.cruii.io'
-        document.cookie = 'sessdata' + '=' + this.sessdata + '; ' + expires + ';domain=.cruii.io'
-        document.cookie = 'biliJct' + '=' + this.biliJct + '; ' + expires + ';domain=.cruii.io'
-        // document.cookie = 'dedeuserid' + '=' + this.dedeuserid + '; ' + expires
-        // document.cookie = 'sessdata' + '=' + this.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*') + '; ' + expires
-        // document.cookie = 'biliJct' + '=' + this.biliJct + '; ' + expires
+        this.$cookies.set('dedeuserid', this.dedeuserid, 60 * 60 * 24 * 31 * 12)
+        this.$cookies.set('sessdata', this.sessdata, 60 * 60 * 24 * 31 * 12)
+        this.$cookies.set('biliJct', this.biliJct, 60 * 60 * 24 * 31 * 12)
         this.cookieDialogVisible = false
       }
     },
@@ -538,9 +532,9 @@ export default {
       const valid = this.$refs.createContainerForm.validate()
       if (valid) {
         this.createContainerLoading = true
-        // this.createContainerModel.description = [this.getCookie('dedeuserid'),
-        //   this.getCookie('sessdata'),
-        //   this.getCookie('biliJct')].join(';')
+        this.createContainerModel.config.dedeuserid = this.$cookies.get('dedeuserid')
+        this.createContainerModel.config.sessdata = this.$cookies.get('sessdata')
+        this.createContainerModel.config.biliJct = this.$cookies.get('biliJct')
         this.createContainerModel.description = [this.createContainerModel.config.dedeuserid,
           this.createContainerModel.config.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*'),
           this.createContainerModel.config.biliJct].join(';')

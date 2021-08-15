@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+const ONE_MONTH = 60 * 60 * 24 * 31
 export default {
   name: 'App',
 
@@ -160,7 +160,7 @@ export default {
   },
   computed: {
     isLogin () {
-      return this.getCookie('isLogin') === 'true'
+      return this.$cookies.get('isLogin') === '0'
     }
   }
 }
