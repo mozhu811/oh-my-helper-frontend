@@ -173,7 +173,8 @@ export default {
       'mdi-twitter',
       'mdi-sina-weibo',
       'mdi-github'
-    ]
+    ],
+    timer: null
   }),
   mounted () {
     // 获取用户信息
@@ -186,21 +187,20 @@ export default {
       await this.$http.get('bilibili/qrCode').then(res => {
         this.qrCode = res.data.qrCodeImg
         const oauthKey = res.data.oauthKey
-        const t = setInterval(() => {
+        this.timer = setInterval(() => {
           this.$http.get(`bilibili/login?oauthKey=${oauthKey}`).then(res => {
             if (res.data.code === 0) {
-              // localStorage.setItem('cookies', JSON.stringify(res.data))
               this.code = res.data.code
               this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
               this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
               this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
               this.$cookies.set('isLogin', res.data.code, ONE_MONTH * 12, '/')
-              clearInterval(t)
+              clearInterval(this.timer)
               this.loginDialogVisible = false
               this.getBilibiliUserInfo()
             } else if (res.data.code === -2) {
               this.overdue = true
-              clearInterval(t)
+              clearInterval(this.timer)
             }
           })
         }, 1000)
@@ -233,6 +233,13 @@ export default {
   computed: {
     isLogin () {
       return this.$cookies.get('isLogin') === '0'
+    }
+  },
+  watch: {
+    loginDialogVisible: function (newVal, oldVal) {
+      if (!newVal) {
+        clearInterval(this.timer)
+      }
     }
   }
 }
