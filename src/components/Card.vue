@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      color="primary lighten-1"
+      :color="item.level === 6 ? 'red lighten-1' : 'primary lighten-1'"
       dark
       elevation="10"
     >
