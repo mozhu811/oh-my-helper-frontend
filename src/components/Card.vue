@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import md5 from '../assets/lib/md5.min.js'
+// import md5 from '../assets/lib/md5.min.js'
 
 export default {
   props: {
@@ -121,10 +121,9 @@ export default {
         ' 升级还需：' + '<b>' + this.item.diffExp + '</b>'
     },
     activeLogBtn: function () {
-      const sessdata = this.$cookies.get('sessdata')
-      if (sessdata) {
-        const key = md5(sessdata)
-        return key === this.item.key
+      const dedeuserid = this.$cookies.get('dedeuserid')
+      if (dedeuserid) {
+        return dedeuserid === this.item.dedeuserid
       }
       return false
     }
