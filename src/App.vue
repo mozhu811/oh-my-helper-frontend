@@ -98,13 +98,14 @@
       >
         <v-card-text>
           <v-btn
-            v-for="icon in icons"
-            :key="icon"
+            v-for="item in icons"
+            :key="item.icon"
             class="mx-4 white--text"
             icon
+            @click="toUrl(item.url)"
           >
             <v-icon size="24px">
-              {{ icon }}
+              {{ item.icon }}
             </v-icon>
           </v-btn>
         </v-card-text>
@@ -169,10 +170,22 @@ export default {
     overdue: true,
     qrCode: null,
     icons: [
-      'mdi-qqchat',
-      'mdi-twitter',
-      'mdi-sina-weibo',
-      'mdi-github'
+      {
+        icon: 'mdi-qqchat',
+        url: 'http://wpa.qq.com/msgrd?v=3&uin=949953001&site=qq&menu=yes'
+      },
+      {
+        icon: 'mdi-twitter',
+        url: 'https://twitter.com/cruii811'
+      },
+      {
+        icon: 'mdi-sina-weibo',
+        url: 'https://weibo.com/2875196650'
+      },
+      {
+        icon: 'mdi-github',
+        url: 'https://github.com/Cruii'
+      }
     ],
     timer: null
   }),
@@ -228,6 +241,9 @@ export default {
       this.$cookies.remove('biliJct')
       this.$cookies.set('isLogin', -1)
       this.code = -1
+    },
+    toUrl (url) {
+      window.open(url, '_blank')
     }
   },
   computed: {
