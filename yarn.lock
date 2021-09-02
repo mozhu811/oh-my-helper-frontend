@@ -8987,9 +8987,9 @@ vuetify-loader@^1.7.0:
     loader-utils "^2.0.0"
 
 vuetify@^2.4.0:
-  version "2.5.3"
-  resolved "https://registry.nlark.com/vuetify/download/vuetify-2.5.3.tgz#9d703414a736879673c94550035adc177a6ca394"
-  integrity sha1-nXA0FKc2h5ZzyUVQA1rcF3pso5Q=
+  version "2.5.8"
+  resolved "https://registry.nlark.com/vuetify/download/vuetify-2.5.8.tgz#a23e6a7e77b77de0744b53cf1e7c9d40efac0635"
+  integrity sha1-oj5qfne3feB0S1PPHnydQO+sBjU=
 
 watchpack-chokidar2@^2.0.1:
   version "2.0.1"
