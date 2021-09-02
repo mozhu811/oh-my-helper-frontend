@@ -18,7 +18,7 @@
       no-resize
       readonly
       outlined
-      rows="20"
+      rows="40"
       name="input-7-4"
       label="运行日志"
       :value="logText"
