@@ -14,11 +14,13 @@
         min-width="200px"
         rounded
         offset-y
+        close-on-content-click
       >
-        <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ on, attrs }">
           <v-btn
             icon
             x-large
+            v-bind="attrs"
             v-on="on"
           >
             <v-avatar
@@ -52,11 +54,13 @@
                   更改容器设置（开发中）
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
+
                 <v-btn
+                  @click.stop="removeContainer"
                   depressed
                   rounded
                   text>
-                  删除容器（开发中）
+                  删除容器
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
@@ -151,6 +155,35 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      v-model="confirmDialogVisible"
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Use Google's location service?
+        </v-card-title>
+        <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="confirmDialogVisible = false"
+          >
+            Disagree
+          </v-btn>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="confirmDialogVisible = false"
+          >
+            Agree
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -166,6 +199,7 @@ export default {
       level: null
     },
     code: -1,
+    confirmDialogVisible: false,
     loginDialogVisible: false,
     overdue: true,
     qrCode: null,
@@ -234,6 +268,13 @@ export default {
           console.log(err.response.data)
         })
       }
+    },
+    removeContainer () {
+      this.confirmDialogVisible = true
+      // const dedeuserid = this.$cookies.get('dedeuserid')
+      // this.$http.delete(`containers/${dedeuserid}`).then(res => {
+      //   console.log(res)
+      // })
     },
     logOut () {
       this.$cookies.remove('dedeuserid')
