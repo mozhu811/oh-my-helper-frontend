@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      :color="item.level === 6 ? 'red lighten-1' : 'primary lighten-1'"
+      :color="item.isLogin ? item.level === 6 ? 'red lighten-1' : 'primary lighten-1' : 'grey darken-2'"
       dark
       elevation="10"
     >
@@ -11,9 +11,8 @@
             class="text-h5"
             v-text="item.username || 'null'"
           ></v-card-title>
-
-          <v-card-subtitle v-if="item.isLogin" v-text="'硬币: ' + item.coins + ' 等级: LV' + item.level"></v-card-subtitle>
-          <v-card-subtitle v-else v-text="'用户Cookie已失效'"></v-card-subtitle>
+          <v-card-subtitle v-if="item.isLogin" v-text="item.containerName"></v-card-subtitle>
+          <v-card-subtitle v-else v-text="'用户Cookie已失效' + '(' + item.containerName +')'"></v-card-subtitle>
           <v-card-text v-html="cardContent"></v-card-text>
 
         </div>
@@ -25,7 +24,7 @@
           bottom
           class="ma-3"
           offset-x="30"
-          offset-y="30"
+          offset-y="45"
         >
           <template v-slot:badge>
             <v-avatar>
@@ -51,38 +50,6 @@
           查看日志
         </v-btn>
         <v-spacer></v-spacer>
-<!--        <v-menu offset-y>-->
-<!--          <template v-slot:activator="{ on, attrs }">-->
-<!--            <v-btn-->
-<!--              color="primary lighten-1"-->
-<!--              elevation="0"-->
-<!--              class="ml-2 mt-5"-->
-<!--              fab-->
-<!--              small-->
-<!--              v-bind="attrs"-->
-<!--              v-on="on"-->
-<!--              :disabled="!activeLogBtn"-->
-<!--            >-->
-<!--              <v-icon dark>-->
-<!--                mdi-cog-outline-->
-<!--              </v-icon>-->
-<!--            </v-btn>-->
-<!--          </template>-->
-<!--          <v-list flat>-->
-<!--            <v-list-item-group-->
-<!--              v-model="selectedItem"-->
-<!--            >-->
-<!--              <v-list-item-->
-<!--                v-for="(item, index) in menuList"-->
-<!--                :key="index"-->
-<!--              >-->
-<!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>{{ item }}</v-list-item-title>-->
-<!--                </v-list-item-content>-->
-<!--              </v-list-item>-->
-<!--            </v-list-item-group>-->
-<!--          </v-list>-->
-<!--        </v-menu>-->
       </v-card-actions>
 
     </v-card>
@@ -116,9 +83,18 @@ export default {
   },
   computed: {
     cardContent: function () {
-      return '当前经验：' + '<b>' + this.item.currentExp + '</b>' +
-        '<br>' +
-        ' 升级还需：' + '<b>' + this.item.diffExp + '</b>'
+      return `等级: <b>LV${this.item.level}</b>   硬币: <b>${this.item.coins || '——'}</b>
+                <br/>
+                当前经验: <b>${this.item.currentExp || '——'}</b> <br/>升级还需: <b>${this.item.diffExp || '——'}</b>`
+
+      // return '等级: LV' + '<b>this.item.level</b>' + ' 硬币: ' + '<b>this.item.coins</b>' +
+      //   '<br>' +
+      //   '当前经验：' + '<b>' + this.item.currentExp + '</b>' +
+      //   '<br>' +
+      //   ' 升级还需：' + '<b>' + this.item.diffExp + '</b>'
+    },
+    title: function () {
+      return (this.item.username || 'null')
     },
     activeLogBtn: function () {
       const dedeuserid = this.$cookies.get('dedeuserid')
