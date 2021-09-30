@@ -5,7 +5,7 @@
       color="primary"
       dark
     >
-      <v-icon x-large>mdi-hubspot</v-icon>
+      <i style="font-size: 40px; padding-right: 10px" class="fa-brands fa-bilibili"></i>
       <v-toolbar-title class="font-weight-bold">Bilibili Helper Hub</v-toolbar-title>
       <v-spacer></v-spacer>
 
@@ -24,7 +24,7 @@
             <v-avatar
               color="grey lighten-2"
             >
-              <v-img v-if="code === 0 || isLogin" :src="userInfo.avatar"></v-img>
+              <v-img v-if="user" :src="user.avatar"></v-img>
               <span v-else class="primary--text">登录</span>
             </v-avatar>
           </v-btn>
@@ -32,31 +32,26 @@
         <v-card>
           <v-list-item-content class="justify-center">
             <div class="mx-auto text-center">
-              <div v-if="code === 0 || isLogin">
-                <h2>{{ userInfo.username }}</h2>
-                <p class="text-caption mt-2">
-                  LV{{ userInfo.level }}
-                </p>
-                <v-divider class="my-3"></v-divider>
+              <div v-if="user">
+<!--                <v-btn-->
+<!--                  depressed-->
+<!--                  rounded-->
+<!--                  text>-->
+<!--                  查看日志-->
+<!--                </v-btn>-->
+<!--                <v-divider class="my-3"></v-divider>-->
+<!--                <v-btn-->
+<!--                  depressed-->
+<!--                  rounded-->
+<!--                  text>-->
+<!--                  更改容器设置-->
+<!--                </v-btn>-->
+<!--                <v-divider class="my-3"></v-divider>-->
                 <v-btn
                   depressed
                   rounded
                   text>
-                  查看日志（开发中）
-                </v-btn>
-                <v-divider class="my-3"></v-divider>
-                <v-btn
-                  depressed
-                  rounded
-                  text>
-                  更改容器设置（开发中）
-                </v-btn>
-                <v-divider class="my-3"></v-divider>
-                <v-btn
-                  depressed
-                  rounded
-                  text>
-                  删除容器（开发中）
+                  删除容器
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
@@ -151,10 +146,20 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-snackbar
+      v-model="snackbar"
+      top
+      app
+      :timeout="3000"
+    >
+      {{ snackbarMsg }}
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
 const ONE_MONTH = 60 * 60 * 24 * 31
 export default {
   name: 'App',
@@ -166,6 +171,8 @@ export default {
       level: null
     },
     code: -1,
+    snackbarMsg: '',
+    snackbar: false,
     loginDialogVisible: false,
     overdue: true,
     qrCode: null,
@@ -191,10 +198,10 @@ export default {
   }),
   mounted () {
     // 获取用户信息
-    this.getBilibiliUserInfo()
-    this.code = Number.parseInt(this.$cookies.get('isLogin'))
+    this.getBilibiliUser()
   },
   methods: {
+    ...mapMutations(['setUser']),
     async getQrCode () {
       this.overdue = false
       await this.$http.get('bilibili/qrCode').then(res => {
@@ -203,14 +210,12 @@ export default {
         this.timer = setInterval(() => {
           this.$http.get(`bilibili/login?oauthKey=${oauthKey}`).then(res => {
             if (res.data.code === 0) {
-              this.code = res.data.code
               this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
               this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
               this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
-              this.$cookies.set('isLogin', res.data.code, ONE_MONTH * 12, '/')
               clearInterval(this.timer)
+              this.getBilibiliUser()
               this.loginDialogVisible = false
-              this.getBilibiliUserInfo()
             } else if (res.data.code === -2) {
               this.overdue = true
               clearInterval(this.timer)
@@ -223,15 +228,18 @@ export default {
       this.loginDialogVisible = true
       this.getQrCode()
     },
-    async getBilibiliUserInfo () {
-      const isLogin = this.$cookies.get('isLogin')
-      if (isLogin === '0') {
-        const dedeuserid = this.$cookies.get('dedeuserid')
-        const sessdata = this.$cookies.get('sessdata')
+    async getBilibiliUser () {
+      const dedeuserid = this.$cookies.get('dedeuserid')
+      const sessdata = this.$cookies.get('sessdata')
+      if (dedeuserid && sessdata) {
         await this.$http.get(`bilibili/user?dedeuserid=${dedeuserid}&sessdata=${sessdata}`).then(res => {
-          this.userInfo = res.data
+          this.setUser(res.data)
         }).catch(err => {
-          console.log(err.response.data)
+          if (err.response.status === 401) {
+            this.snackbarMsg = err.response.data.message
+            this.snackbar = true
+            this.logOut()
+          }
         })
       }
     },
@@ -239,17 +247,14 @@ export default {
       this.$cookies.remove('dedeuserid')
       this.$cookies.remove('sessdata')
       this.$cookies.remove('biliJct')
-      this.$cookies.set('isLogin', -1)
-      this.code = -1
+      this.setUser(null)
     },
     toUrl (url) {
       window.open(url, '_blank')
     }
   },
   computed: {
-    isLogin () {
-      return this.$cookies.get('isLogin') === '0'
-    }
+    ...mapState(['user'])
   },
   watch: {
     loginDialogVisible: function (newVal, oldVal) {
