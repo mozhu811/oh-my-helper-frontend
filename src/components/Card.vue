@@ -1,21 +1,27 @@
 <template>
   <div>
     <v-card
-      :color="item.level === 6 ? 'red lighten-1' : 'primary lighten-1'"
+      :color="item.isLogin ? item.level === 6 ? 'red lighten-1' : 'primary lighten-1' : 'grey darken-2'"
       dark
       elevation="10"
+      shaped
+      max-width="450"
     >
       <div class="d-flex flex-no-wrap justify-space-between">
         <div>
           <v-card-title
-            class="text-h5"
-            v-text="item.username || 'null'"
-          ></v-card-title>
-
-          <v-card-subtitle v-if="item.isLogin" v-text="'硬币: ' + item.coins + ' 等级: LV' + item.level"></v-card-subtitle>
-          <v-card-subtitle v-else v-text="'用户Cookie已失效'"></v-card-subtitle>
+            :class='cardTitleClass'
+            v-html="item.username"
+          >
+          </v-card-title>
+          <v-card-subtitle>
+            <div v-if="item.medals.length > 0" style="display: flex">
+              <medal v-for="(medal, index) in item.medals" :key="index" :name="medal.name" :level="medal.level"
+              :color-border="medal.colorBorder" :color-start="medal.colorStart" :color-end="medal.colorEnd"></medal>
+            </div>
+            <div v-else><br></div>
+          </v-card-subtitle>
           <v-card-text v-html="cardContent"></v-card-text>
-
         </div>
 
         <v-badge
@@ -24,8 +30,8 @@
           bordered
           bottom
           class="ma-3"
-          offset-x="30"
-          offset-y="30"
+          offset-x="40"
+          offset-y="60"
         >
           <template v-slot:badge>
             <v-avatar>
@@ -40,49 +46,17 @@
         </v-badge>
       </div>
       <v-card-actions>
-        <v-btn
-          class="ml-2 mt-5"
-          outlined
-          rounded
-          small
-          :disabled="!activeLogBtn"
-          @click="goLogPage(item.dedeuserid)"
-        >
-          查看日志
-        </v-btn>
+        <!--        <v-btn-->
+        <!--          class="ml-2 mt-5"-->
+        <!--          outlined-->
+        <!--          rounded-->
+        <!--          small-->
+        <!--          :disabled="!activeLogBtn"-->
+        <!--          @click="goLogPage(item.dedeuserid)"-->
+        <!--        >-->
+        <!--          查看日志-->
+        <!--        </v-btn>-->
         <v-spacer></v-spacer>
-<!--        <v-menu offset-y>-->
-<!--          <template v-slot:activator="{ on, attrs }">-->
-<!--            <v-btn-->
-<!--              color="primary lighten-1"-->
-<!--              elevation="0"-->
-<!--              class="ml-2 mt-5"-->
-<!--              fab-->
-<!--              small-->
-<!--              v-bind="attrs"-->
-<!--              v-on="on"-->
-<!--              :disabled="!activeLogBtn"-->
-<!--            >-->
-<!--              <v-icon dark>-->
-<!--                mdi-cog-outline-->
-<!--              </v-icon>-->
-<!--            </v-btn>-->
-<!--          </template>-->
-<!--          <v-list flat>-->
-<!--            <v-list-item-group-->
-<!--              v-model="selectedItem"-->
-<!--            >-->
-<!--              <v-list-item-->
-<!--                v-for="(item, index) in menuList"-->
-<!--                :key="index"-->
-<!--              >-->
-<!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>{{ item }}</v-list-item-title>-->
-<!--                </v-list-item-content>-->
-<!--              </v-list-item>-->
-<!--            </v-list-item-group>-->
-<!--          </v-list>-->
-<!--        </v-menu>-->
       </v-card-actions>
 
     </v-card>
@@ -90,14 +64,15 @@
 </template>
 
 <script>
-// import md5 from '../assets/lib/md5.min.js'
-
+import Medal from '@/components/Medal'
 export default {
+  components: { Medal },
   props: {
     item: Object
   },
   data () {
     return {
+      medalNum: 3,
       selectedItem: '',
       menuList: [
         '重新部署'
@@ -115,10 +90,21 @@ export default {
     }
   },
   computed: {
+    cardTitleClass: function () {
+      if (this.item.username.length > 7) {
+        return 'text-md-h6 font-weight-medium'
+      }
+      return 'text-md-h5 font-weight-medium'
+    },
     cardContent: function () {
-      return '当前经验：' + '<b>' + this.item.currentExp + '</b>' +
-        '<br>' +
-        ' 升级还需：' + '<b>' + this.item.diffExp + '</b>'
+      return `等级: <b>LV${this.item.level}</b>   硬币: <b>${this.item.coins || '——'}</b>
+                <br/>
+                当前经验: <b>${this.item.currentExp || '——'}</b>
+                <br/>升级还需: <b>${this.item.diffExp || '——'}</b>
+                <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + '天' : '——'}`
+    },
+    title: function () {
+      return (this.item.username || 'null')
     },
     activeLogBtn: function () {
       const dedeuserid = this.$cookies.get('dedeuserid')

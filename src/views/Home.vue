@@ -5,26 +5,12 @@
       class="mx-2"
       fab
       dark
-      color="primary"
+      color="pink"
       elevation="10"
-      @click.stop="createContainerDialogVisible = true"
+      @click.stop="createTaskDialogVisible = true"
     >
       <v-icon dark>
         mdi-plus
-      </v-icon>
-    </v-btn>
-
-    <v-btn
-      v-show="!overlay"
-      class="mx-2"
-      fab
-      dark
-      color="warning"
-      elevation="10"
-      @click.stop="cookieDialogVisible = true"
-    >
-      <v-icon dark>
-        mdi-square-edit-outline
       </v-icon>
     </v-btn>
 
@@ -42,84 +28,27 @@
       <v-progress-circular
         indeterminate
         size="100"
-      >Loading...
+      >
+        <i class="fa-brands fa-bilibili"/>
+        Loading...
       </v-progress-circular>
     </v-overlay>
 
-    <!-- 更新Cookie对话框 -->
-    <v-dialog
-      v-model="cookieDialogVisible"
-      persistent
-      max-width="600px"
-    >
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">更新Cookie</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form
-            ref="inputCookieForm"
-            v-model="valid"
-            lazy-validation
-          >
-            <v-text-field
-              v-model="sessdata"
-              :rules="[rules.required]"
-              label="SESSDATA"
-              placeholder="请填入B站Cookie中SESSDATA的值"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="dedeuserid"
-              :rules="[rules.required]"
-              label="DEDEUSERID"
-              placeholder="请填入B站Cookie中DedeUserID的值"
-              required
-            ></v-text-field>
-
-            <v-text-field
-              v-model="biliJct"
-              :rules="[rules.required]"
-              label="BILIJCT"
-              placeholder="请填入B站Cookie中bili_jct的值"
-              required
-            ></v-text-field>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            text
-            @click="cookieDialogVisible = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            :loading="updateCookieLoading"
-            :disabled="updateCookieLoading"
-            @click="updateCookies"
-          >
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <!-- 创建容器配置对话框 -->
     <v-dialog
-      v-model="createContainerDialogVisible"
-      persistent
-      max-width="650px"
+      v-model="createTaskDialogVisible1"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      scrollable
     >
       <v-card>
         <v-card-title>
-          <span class="text-h5">创建容器</span>
+          <span class="text-h5">新建任务</span>
         </v-card-title>
         <v-card-text>
           <v-form
-            ref="createContainerForm"
+            ref="createTaskForm"
             v-model="valid"
             lazy-validation
           >
@@ -131,7 +60,7 @@
                   md="6"
                 >
                   <v-text-field
-                    v-model="createContainerModel.containerName"
+                    v-model="createTaskModel.containerName"
                     :rules="[rules.required, rules.containerName]"
                     label="容器名"
                   ></v-text-field>
@@ -143,7 +72,7 @@
                   md="6">
                   <v-select
                     :items="platforms"
-                    v-model="createContainerModel.config.devicePlatform"
+                    v-model="createTaskModel.config.devicePlatform"
                     label="漫画签到平台"
                     hint="手机端漫画签到时的平台，建议选择你设备的平台"
                   ></v-select>
@@ -157,7 +86,7 @@
                     label="每日投币数量"
                     :rules="[rules.required]"
                     hint="每日投币数量,默认 5 ,为 0 时则不投币"
-                    v-model="createContainerModel.config.numberOfCoins"
+                    v-model="createTaskModel.config.numberOfCoins"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -167,7 +96,7 @@
                     label="保留硬币数量"
                     :rules="[rules.reserveCoins]"
                     hint="预留的硬币数，当小于这个值时，不会进行投币任务"
-                    v-model="createContainerModel.config.reserveCoins"
+                    v-model="createTaskModel.config.reserveCoins"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -181,7 +110,7 @@
                   <v-switch
                     true-value="1"
                     false-value="0"
-                    v-model="createContainerModel.config.selectLike"
+                    v-model="createTaskModel.config.selectLike"
                     class="v-input--reverse">
                     <template #label>
                       投币时是否点赞
@@ -194,7 +123,7 @@
                   md="4"
                   sm="6">
                   <v-switch
-                    v-model="createContainerModel.config.giveGift"
+                    v-model="createTaskModel.config.giveGift"
                     class="v-input--reverse">
                     <template #label>
                       过期礼物处理
@@ -205,13 +134,13 @@
                   cols="6"
                   sm="4"
                   md="4"
-                  v-show="createContainerModel.config.giveGift"
+                  v-show="createTaskModel.config.giveGift"
                 >
                   <v-text-field
                     label="UP主UID"
                     :rules="[rules.required]"
                     hint="指定UP主。为0时则随机选取一个up主"
-                    v-model="createContainerModel.config.upLive"
+                    v-model="createTaskModel.config.upLive"
                   ></v-text-field>
                 </v-col>
 
@@ -223,7 +152,7 @@
                   md="4"
                 >
                   <v-switch
-                    v-model="createContainerModel.config.monthEndAutoCharge"
+                    v-model="createTaskModel.config.monthEndAutoCharge"
                     class="v-input--reverse">
                     <template #label>
                       B币券充电
@@ -235,13 +164,13 @@
                   cols="6"
                   sm="4"
                   md="3"
-                  v-show="createContainerModel.config.monthEndAutoCharge"
+                  v-show="createTaskModel.config.monthEndAutoCharge"
                 >
                   <v-text-field
                     label="UP主UID"
                     :rules="[rules.required]"
                     hint="指定UP主。为0时则给自己充电"
-                    v-model="createContainerModel.config.chargeForLove"
+                    v-model="createTaskModel.config.chargeForLove"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -254,7 +183,7 @@
                     label="投币策略"
                     item-text='name'
                     item-value='id'
-                    v-model="createContainerModel.config.coinAddPriority"
+                    v-model="createTaskModel.config.coinAddPriority"
                   >
                   </v-select>
                 </v-col>
@@ -296,7 +225,7 @@
                   <v-text-field
                     label="Server酱SendKey"
                     hint="Server酱SendKey"
-                    v-model="createContainerModel.config.serverpushkey"
+                    v-model="createTaskModel.config.serverpushkey"
                   ></v-text-field>
                 </v-col>
 
@@ -308,7 +237,7 @@
                   <v-text-field
                     label="TelegramBotToken"
                     hint="Telegram机器人分配的token"
-                    v-model="createContainerModel.config.telegrambottoken"
+                    v-model="createTaskModel.config.telegrambottoken"
                   ></v-text-field>
                 </v-col>
 
@@ -320,7 +249,7 @@
                   <v-text-field
                     label="TelegramUserId"
                     hint="你自己Telegram的数字ID"
-                    v-model="createContainerModel.config.telegramchatid"
+                    v-model="createTaskModel.config.telegramchatid"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -333,7 +262,7 @@
                     label="电子邮箱"
                     :rules="[rules.required]"
                     hint="此邮箱用于Cookie失效通知"
-                    v-model="createContainerModel.config.email"
+                    v-model="createTaskModel.config.email"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -352,9 +281,9 @@
           <v-btn
             color="blue darken-1"
             text
-            :loading="createContainerLoading"
-            :disabled="createContainerLoading"
-            @click="createContainer"
+            :loading="createTaskLoading"
+            :disabled="createTaskLoading"
+            @click="createTask"
           >
             Submit
           </v-btn>
@@ -362,6 +291,231 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog
+      v-model="createTaskDialogVisible"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      scrollable
+    >
+      <v-card tile>
+        <v-toolbar
+          flat
+          dark
+          color="primary"
+        >
+          <v-btn
+            icon
+            dark
+            @click="createTaskDialogVisible = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Settings</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-btn
+              dark
+              text
+              @click="createTaskDialogVisible = false"
+            >
+              SAVE
+            </v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-card-text>
+          <v-form
+            ref="createTaskForm"
+            v-model="valid"
+            lazy-validation
+          >
+            <v-container>
+              <v-subheader>投币设置</v-subheader>
+              <v-row>
+                <v-col
+                  cols="6"
+                  md="4"
+                >
+                  <v-text-field
+                    label="每日投币数量"
+                    :rules="[rules.required]"
+                    hint="每日投币数量,默认 5 ,为 0 时则不投币"
+                    v-model="createTaskModel.config.numberOfCoins"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="6"
+                  md="4"
+                >
+                  <v-text-field
+                    label="保留硬币数量"
+                    :rules="[rules.reserveCoins]"
+                    hint="预留的硬币数，当小于这个值时，不会进行投币任务"
+                    v-model="createTaskModel.config.reserveCoins"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col
+                  cols="6"
+                  md="4"
+                >
+                  <v-select
+                    :items="coinAddPriorities"
+                    label="投币策略"
+                    item-text='name'
+                    item-value='id'
+                    v-model="createTaskModel.config.coinAddPriority"
+                  >
+                  </v-select>
+                </v-col>
+              </v-row>
+
+              <v-subheader>漫画签到设置</v-subheader>
+              <v-row>
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="4">
+                  <v-select
+                    :items="platforms"
+                    v-model="createTaskModel.config.devicePlatform"
+                    label="漫画签到平台"
+                    hint="手机端漫画签到时的平台，建议选择你设备的平台"
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-subheader>直播间过期礼物设置</v-subheader>
+              <v-row>
+                <v-col
+                  cols="6"
+                  sm="4"
+                  md="4"
+                >
+                  <v-text-field
+                    label="UP主UID"
+                    :rules="[rules.required]"
+                    hint="指定UP主。为0时则为开发者"
+                    v-model="createTaskModel.config.upLive"
+                  ></v-text-field>
+                </v-col>
+
+              </v-row>
+              <v-subheader>自动充电设置（限定年费大会员）</v-subheader>
+              <v-row>
+                <v-col
+                  cols="6"
+                  sm="4"
+                  md="4"
+                >
+                  <v-text-field
+                    label="UP主UID"
+                    :rules="[rules.required]"
+                    hint="指定UP主。为0时则为开发者"
+                    v-model="createTaskModel.config.chargeForLove"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-subheader>任务日志推送设置</v-subheader>
+              <v-row>
+                <v-col
+                  cols="6"
+                  sm="6"
+                  md="4"
+                >
+                  <v-select
+                    :items="pushPriorities"
+                    label="推送渠道"
+                    item-text='name'
+                    item-value='id'
+                    v-model="pushPriority"
+                  >
+                  </v-select>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col
+                  cols="12"
+                  v-if="pushPriority === 0">
+                  <v-text-field
+                    label="Server酱SendKey"
+                    hint="Server酱SendKey"
+                    v-model="createTaskModel.config.serverpushkey"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col
+                  cols="12"
+                  sm="6"
+                  md="6"
+                  v-if="pushPriority === 1">
+                  <v-text-field
+                    label="Telegram bot token"
+                    hint="Telegram bot token"
+                    v-model="createTaskModel.config.telegrambottoken"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col
+                  cols="12"
+                  md="6"
+                  v-if="pushPriority === 1">
+                  <v-text-field
+                    label="Telegram user ID"
+                    hint="Telegram user ID"
+                    v-model="createTaskModel.config.telegramchatid"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col
+                  cols="12"
+                  md="3"
+                  v-if="pushPriority === 2">
+                  <v-text-field
+                    label="企业微信 Corp ID"
+                    hint="企业微信 Corp ID"
+                    v-model="createTaskModel.config.corpId"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="3"
+                  v-if="pushPriority === 2">
+                  <v-text-field
+                    label="企业微信 Corp Secret"
+                    hint="企业微信 Corp Secret"
+                    v-model="createTaskModel.config.corpSecret"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="3"
+                  v-if="pushPriority === 2">
+                  <v-text-field
+                    label="企业微信 Agent ID"
+                    hint="企业微信 Agent ID"
+                    v-model="createTaskModel.config.agentId"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="3"
+                  v-if="pushPriority === 2">
+                  <v-text-field
+                    label="企业微信 Media ID"
+                    hint="素材管理中的图片Media ID"
+                    v-model="createTaskModel.config.mediaId"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-subheader>其他设置</v-subheader>
+              <v-checkbox label="关注开发者账号"></v-checkbox>
+            </v-container>
+          </v-form>
+        </v-card-text>
+
+        <div style="flex: 1 1 auto;"></div>
+      </v-card>
+    </v-dialog>
     <v-snackbar
       v-model="snackbar"
       color="primary"
@@ -386,8 +540,7 @@ export default {
   },
   data () {
     return {
-      createContainerLoading: false,
-      updateCookieLoading: false,
+      createTaskLoading: false,
       snackbarMsg: '',
       snackbar: false,
       items: [],
@@ -397,14 +550,13 @@ export default {
       overlay: false,
       valid: false,
       cookieDialogVisible: false,
-      createContainerDialogVisible: false,
+      createTaskDialogVisible: false,
       rules: {
-        required: value => value !== null || 'Required.',
-        containerName: value => /^[^0-9][a-zA-Z0-9_]+$/.test(value) || '容器名为英文、数字组合且不能以数字开头',
+        required: value => value !== null || '该字段必填',
         reserveCoins: value => (value <= 4000 && value >= 0) || '范围: [0, 4000]'
       },
       platforms: [
-        'ios', 'android'
+        'iOS', '安卓'
       ],
       coinAddPriorities: [
         {
@@ -418,39 +570,42 @@ export default {
       ],
       needPush: false,
       pushPriorities: [
+        // {
+        //   id: 0,
+        //   name: 'Server酱Turbo'
+        // },
+        // {
+        //   id: 1,
+        //   name: 'Telegram'
+        // },
         {
-          id: 0,
-          name: 'Server酱Turbo'
-        },
-        {
-          id: 1,
-          name: 'Telegram'
+          id: 2,
+          name: '企业微信（图文推送）'
         }
       ],
-      pushPriority: null,
-      createContainerModel: {
-        containerName: null,
-        description: null,
+      pushPriority: 2,
+      createTaskModel: {
         config: {
           sessdata: null,
           dedeuserid: null,
           biliJct: null,
-          taskIntervalTime: 10,
-          numberOfCoins: 5,
+          donateCoins: 5,
           reserveCoins: 50,
-          selectLike: 0,
-          monthEndAutoCharge: false,
-          giveGift: false,
-          upLive: 0,
-          chargeForLove: 0,
-          devicePlatform: 'ios',
-          coinAddPriority: 0,
+          autoCharge: false,
+          donateGift: false,
+          donateGiftTarget: null,
+          autoChargeTarget: null,
+          devicePlatform: 'iOS',
+          donateCoinStrategy: 0,
           userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
           skipDailyTask: false,
-          telegrambottoken: null,
-          telegramchatid: null,
-          serverpushkey: null,
-          email: null
+          tgBotToken: null,
+          tgBotChatId: null,
+          scKey: null,
+          corpId: null,
+          corpSecret: null,
+          agentId: null,
+          mediaId: null
         }
       }
     }
@@ -458,27 +613,10 @@ export default {
   methods: {
     listContainers () {
       this.overlay = true
-      this.$http.get('containers').then(res => {
+      this.$http.get('bilibili/users').then(res => {
         this.items = res.data
       }).finally(() => {
         this.overlay = false
-      })
-    },
-    updateCookies () {
-      this.updateCookieLoading = true
-      this.$http.put('containers/cookies',
-        {
-          dedeuserid: this.dedeuserid,
-          sessdata: this.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*'),
-          biliJct: this.biliJct
-        }).then(res => {
-        this.setCookies()
-        this.snackbarMsg = '更新成功'
-        this.snackbar = true
-      }).finally(() => {
-        this.updateCookieLoading = false
-        this.cookieDialogVisible = false
-        this.listContainers()
       })
     },
     setCookies () {
@@ -490,29 +628,29 @@ export default {
         this.cookieDialogVisible = false
       }
     },
-    createContainer () {
-      const valid = this.$refs.createContainerForm.validate()
+    createTask () {
+      const valid = this.$refs.createTaskForm.validate()
       if (valid) {
-        this.createContainerLoading = true
-        this.createContainerModel.config.dedeuserid = this.$cookies.get('dedeuserid')
-        this.createContainerModel.config.sessdata = this.$cookies.get('sessdata')
-        this.createContainerModel.config.biliJct = this.$cookies.get('biliJct')
-        this.createContainerModel.description = [this.createContainerModel.config.dedeuserid,
-          this.createContainerModel.config.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*'),
-          this.createContainerModel.config.biliJct].join(';')
-        this.$http.post('containers', this.createContainerModel).then(res => {
+        this.createTaskLoading = true
+        this.createTaskModel.config.dedeuserid = this.$cookies.get('dedeuserid')
+        this.createTaskModel.config.sessdata = this.$cookies.get('sessdata')
+        this.createTaskModel.config.biliJct = this.$cookies.get('biliJct')
+        this.createTaskModel.description = [this.createTaskModel.config.dedeuserid,
+          this.createTaskModel.config.sessdata.replaceAll('%2C', ',').replaceAll('%2A', '*'),
+          this.createTaskModel.config.biliJct].join(';')
+        this.$http.post('containers', this.createTaskModel).then(res => {
           this.snackbarMsg = '创建成功'
           this.snackbar = true
-          this.createContainerDialogVisible = false
+          this.createTaskDialogVisible = false
           this.listContainers()
         }).finally(() => {
-          this.createContainerLoading = false
+          this.createTaskLoading = false
         })
       }
     },
     closeCreateContainerDialog () {
-      this.createContainerModel = this.$options.data().createContainerModel
-      this.createContainerDialogVisible = false
+      this.createTaskModel = this.$options.data().createTaskModel
+      this.createTaskDialogVisible = false
     }
   }
 }

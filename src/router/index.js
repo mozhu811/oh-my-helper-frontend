@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import ContainerLog from '@/views/ContainerLog'
+import ContainerLog from '@/views/TaskLog'
 Vue.use(VueRouter)
 
 const routes = [
