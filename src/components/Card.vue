@@ -111,7 +111,7 @@ export default {
       return (this.item.username || 'null')
     },
     avatarUrl: function () {
-      return this.host + '/avatars/' + this.item.dedeuserid + '.png'
+      return this.$http.defaults.baseURL + 'avatars/' + this.item.dedeuserid + '.png'
     },
     activeLogBtn: function () {
       const dedeuserid = this.$cookies.get('dedeuserid')
