@@ -1,10 +1,11 @@
 <template>
   <v-container>
     <v-btn
-      v-show="!overlay"
+      v-show="!screenLoading"
+      :disabled="!user"
       class="mx-2"
       fab
-      dark
+      :dark="user !== null"
       color="pink"
       elevation="10"
       @click.stop="createTaskDialogVisible = true"
@@ -16,7 +17,7 @@
 
     <div class="mt-5">
       <v-row>
-        <v-col cols="12" sm="6" md="6" lg="4" xl="3" v-for="(item, i) in items" :key="i">
+        <v-col cols="12" sm="6" md="6" lg="4" xl="3" v-for="(item, i) in users" :key="i">
           <card :item="item"></card>
         </v-col>
       </v-row>
@@ -24,7 +25,7 @@
 
     <v-overlay
       color="#212121"
-      light opacity="0.10" :value="overlay">
+      light opacity="0.10" :value="screenLoading">
       <v-progress-circular
         indeterminate
         size="100"
@@ -282,13 +283,11 @@
 
 <script>
 import Card from '@/components/Card'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
     Card
-  },
-  created () {
-    this.listUsers()
   },
   data () {
     return {
@@ -368,15 +367,11 @@ export default {
 
     }
   },
+  mounted () {
+    this.listUsers()
+  },
   methods: {
-    listUsers () {
-      this.overlay = true
-      this.$http.get('bilibili/users').then(res => {
-        this.items = res.data
-      }).finally(() => {
-        this.overlay = false
-      })
-    },
+    ...mapMutations(['listUsers']),
     createTask () {
       const valid = this.$refs.createTaskForm.validate()
       if (valid) {
@@ -405,6 +400,9 @@ export default {
     pushChannel: function (newVal, oldVal) {
       this.$refs.createTaskForm.resetValidation()
     }
+  },
+  computed: {
+    ...mapState(['user', 'users', 'screenLoading'])
   }
 }
 </script>

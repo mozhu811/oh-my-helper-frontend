@@ -50,8 +50,9 @@
                 <v-btn
                   depressed
                   rounded
-                  text>
-                  删除容器
+                  text
+                  @click="removeTaskDialogVisible =true">
+                  删除任务
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
@@ -147,6 +148,36 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog
+      v-model="removeTaskDialogVisible"
+      persistent
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          删除任务
+        </v-card-title>
+        <v-card-text><v-icon left color="orange">mdi-alert</v-icon>确认删除任务？该操作不可逆</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="removeTaskDialogVisible = false"
+          >
+            取消
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            :loading="removeTaskLoading"
+            @click="removeTask"
+          >
+            确认
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar
       v-model="snackbar"
       top
@@ -173,7 +204,9 @@ export default {
     code: -1,
     snackbarMsg: '',
     snackbar: false,
+    removeTaskDialogVisible: false,
     loginDialogVisible: false,
+    removeTaskLoading: false,
     overdue: true,
     qrCode: null,
     icons: [
@@ -201,7 +234,7 @@ export default {
     this.getBilibiliUser()
   },
   methods: {
-    ...mapMutations(['setUser']),
+    ...mapMutations(['setUser', 'listUsers']),
     async getQrCode () {
       this.overdue = false
       await this.$http.get('bilibili/qrCode').then(res => {
@@ -213,6 +246,9 @@ export default {
               this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/', '.cruii.io')
               this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/', '.cruii.io')
               this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/', '.cruii.io')
+              // this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
+              // this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
+              // this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
               clearInterval(this.timer)
               this.getBilibiliUser()
               this.loginDialogVisible = false
@@ -242,6 +278,17 @@ export default {
           }
         })
       }
+    },
+    removeTask () {
+      this.removeTaskLoading = true
+      this.$http.delete('tasks').then(res => {
+        this.snackbarMsg = '😃 删除成功'
+        this.snackbar = true
+        this.listUsers()
+      }).finally(() => {
+        this.removeTaskDialogVisible = false
+        this.removeTaskLoading = false
+      })
     },
     logOut () {
       this.$cookies.remove('dedeuserid')

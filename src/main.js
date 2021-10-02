@@ -9,6 +9,7 @@ import store from './store'
 Vue.use(VueCookies)
 axios.defaults.withCredentials = true
 Vue.prototype.$http = axios
+Vue.prototype.axios = axios
 const host = 'https://api.cruii.io/bilibili/'
 axios.defaults.baseURL = host
 
