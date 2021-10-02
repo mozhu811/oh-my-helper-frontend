@@ -41,7 +41,7 @@
           </template>
 
           <v-avatar size="125">
-            <v-img :src="item.avatar"></v-img>
+            <v-img :src="avatarUrl"/>
           </v-avatar>
         </v-badge>
       </div>
@@ -87,11 +87,15 @@ export default {
           dedeuserid: dedeuserid
         }
       })
+    },
+    countChinese (str) {
+      const m = str.match(/[\u4e00-\u9fff\uf900-\ufaff]/g)
+      return (!m ? 0 : m.length)
     }
   },
   computed: {
     cardTitleClass: function () {
-      if (this.item.username.length > 7) {
+      if (this.countChinese(this.item.username) > 7) {
         return 'text-md-h6 font-weight-medium'
       }
       return 'text-md-h5 font-weight-medium'
@@ -101,10 +105,13 @@ export default {
                 <br/>
                 当前经验: <b>${this.item.currentExp || '——'}</b>
                 <br/>升级还需: <b>${this.item.diffExp || '——'}</b>
-                <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + '天' : '——'}`
+                <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
     },
     title: function () {
       return (this.item.username || 'null')
+    },
+    avatarUrl: function () {
+      return this.host + '/avatars/' + this.item.dedeuserid + '.png'
     },
     activeLogBtn: function () {
       const dedeuserid = this.$cookies.get('dedeuserid')
