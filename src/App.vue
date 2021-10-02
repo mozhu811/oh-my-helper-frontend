@@ -210,9 +210,9 @@ export default {
         this.timer = setInterval(() => {
           this.$http.get(`bilibili/login?oauthKey=${oauthKey}`).then(res => {
             if (res.data.code === 0) {
-              this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
-              this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
-              this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
+              this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/', '*.cruii.io')
+              this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/', '*.cruii.io')
+              this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/', '*.cruii.io')
               clearInterval(this.timer)
               this.getBilibiliUser()
               this.loginDialogVisible = false
