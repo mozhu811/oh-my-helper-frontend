@@ -182,6 +182,8 @@
               <v-row>
                 <v-col
                   cols="12"
+                  sm="6"
+                  md="6"
                   v-if="pushChannel === 0">
                   <v-text-field
                     label="Server酱SendKey"
@@ -330,10 +332,10 @@ export default {
       ],
       needPush: false,
       pushPriorities: [
-        // {
-        //   id: 0,
-        //   name: 'Server酱Turbo'
-        // },
+        {
+          id: 0,
+          name: 'Server酱Turbo'
+        },
         {
           id: 1,
           name: 'Telegram'
