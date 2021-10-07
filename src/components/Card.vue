@@ -10,8 +10,8 @@
       <div class="d-flex flex-no-wrap justify-space-between">
         <div>
           <v-card-title
-            :class='cardTitleClass'
-            v-html="item.username"
+            class="text-md-h5 font-weight-medium"
+            v-html="username"
           >
           </v-card-title>
           <v-card-subtitle>
@@ -25,7 +25,7 @@
         </div>
 
         <v-badge
-          :value="item.isVip"
+          :value="item.vipStatus === 1"
           avatar
           bordered
           bottom
@@ -95,8 +95,8 @@ export default {
   },
   computed: {
     cardTitleClass: function () {
-      if (this.countChinese(this.item.username) > 7) {
-        return 'text-md-h6 font-weight-medium'
+      if (this.countChinese(this.item.username) > 7 || this.item.username.length >= 12) {
+        return 'text-md-h6 text-sm-subtitle-1 font-weight-medium'
       }
       return 'text-md-h5 font-weight-medium'
     },
@@ -107,11 +107,14 @@ export default {
                 <br/>升级还需: <b>${this.item.diffExp || '——'}</b>
                 <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
     },
-    title: function () {
-      return (this.item.username || 'null')
-    },
     avatarUrl: function () {
       return this.$http.defaults.baseURL + 'avatars/' + this.item.dedeuserid + '.png'
+    },
+    username: function () {
+      if (this.countChinese(this.item.username) > 7) {
+        return this.item.username.substr(0, 7) + '..'
+      }
+      return this.item.username
     },
     activeLogBtn: function () {
       const dedeuserid = this.$cookies.get('dedeuserid')
