@@ -65,7 +65,7 @@
               @click="createTask"
               :loading="createTaskLoading"
             >
-              SAVE
+              保存
             </v-btn>
           </v-toolbar-items>
         </v-toolbar>
@@ -141,7 +141,7 @@
                   <v-text-field
                     label="礼物赠送对象UID"
                     :rules="[rules.required]"
-                    hint="指定礼物赠送对象。为0时则为开发者"
+                    hint="指定礼物赠送对象，为0时则为本项目作者。"
                     v-model="config.donateGiftTarget"
                   ></v-text-field>
                 </v-col>
@@ -157,7 +157,7 @@
                   <v-text-field
                     label="充电对象UID"
                     :rules="[rules.required]"
-                    hint="指定充电对象。为0时则为开发者，感谢您对本项目的支持"
+                    hint="指定充电对象。该值为0时则为本项目作者，用于维护网站的正常运行和服务器资源开销，感谢您对本项目的支持。"
                     v-model="config.autoChargeTarget"
                   ></v-text-field>
                 </v-col>
@@ -174,6 +174,7 @@
                     label="推送渠道"
                     item-text='name'
                     item-value='id'
+                    hint="用于接收每日执行日志，强烈建议配置。便于通知您的数据过期。"
                     v-model="pushChannel"
                   >
                   </v-select>
@@ -187,7 +188,7 @@
                   v-if="pushChannel === 0">
                   <v-text-field
                     label="Server酱SendKey"
-                    hint="Server酱SendKey"
+                    hint="Server酱SendKey。详情请前往官网 https://sct.ftqq.com/"
                     :rules="[rules.required]"
                     v-model="config.scKey"
                   ></v-text-field>
@@ -200,7 +201,7 @@
                   v-if="pushChannel === 1">
                   <v-text-field
                     label="Telegram bot token"
-                    hint="Telegram bot token"
+                    hint="BotFather 分配的 Token"
                     :rules="[rules.required]"
                     v-model="config.tgBotToken"
                   ></v-text-field>
@@ -212,7 +213,7 @@
                   v-if="pushChannel === 1">
                   <v-text-field
                     label="Telegram user ID"
-                    hint="Telegram user ID"
+                    hint="Telegram 用户的数字 ID"
                     :rules="[rules.required]"
                     v-model="config.tgBotChatId"
                   ></v-text-field>
@@ -257,9 +258,21 @@
                   v-if="pushChannel === 2">
                   <v-text-field
                     label="企业微信 Media ID"
-                    hint="素材管理中的图片Media ID"
+                    hint="素材管理中的图片Media ID。在【管理工具】-【图片】中找到您需要的图片，右键获取图片链接，即可在链接中看到 media_id 参数的值。"
                     :rules="[rules.required]"
                     v-model="config.mediaId"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col
+                  cols="12"
+                  md="3"
+                  v-if="pushChannel === 3">
+                  <v-text-field
+                    label="Device key"
+                    hint="Bark App 分配的 Device key。只填写 device_key 即可，不需要其他内容。"
+                    :rules="[rules.required]"
+                    v-model="config.barkDeviceKey"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -333,6 +346,10 @@ export default {
       needPush: false,
       pushPriorities: [
         {
+          id: -1,
+          name: '无'
+        },
+        {
           id: 0,
           name: 'Server酱Turbo'
         },
@@ -343,9 +360,13 @@ export default {
         {
           id: 2,
           name: '企业微信（图文推送）'
+        },
+        {
+          id: 3,
+          name: 'Bark'
         }
       ],
-      pushChannel: 2,
+      pushChannel: -1,
       config: {
         donateCoins: 5,
         reserveCoins: 50,
@@ -364,6 +385,8 @@ export default {
         corpSecret: null,
         agentId: null,
         mediaId: null,
+        barkDeviceKey: null,
+        biliPush: false,
         followDeveloper: false
       }
 
@@ -400,6 +423,9 @@ export default {
       }
     },
     pushChannel: function (newVal, oldVal) {
+      if (newVal === -1) {
+        this.config.biliPush = true
+      }
       this.$refs.createTaskForm.resetValidation()
     }
   },
