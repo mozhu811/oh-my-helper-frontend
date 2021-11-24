@@ -95,7 +95,7 @@ export default {
   },
   computed: {
     cardTitleClass: function () {
-      if (this.countChinese(this.item.username) > 7 || this.item.username.length >= 12) {
+      if (this.countChinese(this.item.username) > 7 || this.item.username.length >= 10) {
         return 'text-md-h6 text-sm-subtitle-1 font-weight-medium'
       }
       return 'text-md-h5 font-weight-medium'
@@ -108,11 +108,15 @@ export default {
                 <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
     },
     avatarUrl: function () {
-      return this.$http.defaults.baseURL + 'avatars/' + this.item.dedeuserid + '.png'
+      return 'https://bilibili-cruii-io-1251547651.cos.ap-chengdu.myqcloud.com/avatars/' + this.item.dedeuserid + '.png'
     },
     username: function () {
       if (this.countChinese(this.item.username) > 7) {
         return this.item.username.substr(0, 7) + '..'
+      } else if (this.countChinese(this.item.username) >= 3 && this.item.username.length >= 10) {
+        return this.item.username.substr(0, 8) + '..'
+      } else if (this.item.username.length >= 14) {
+        return this.item.username.substr(0, 14) + '..'
       }
       return this.item.username
     },
