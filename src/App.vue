@@ -9,73 +9,61 @@
       <v-toolbar-title class="font-weight-bold">Bilibili Helper Hub</v-toolbar-title>
       <v-spacer></v-spacer>
 
-      <v-menu
-        bottom
-        min-width="200px"
-        rounded
-        offset-y
-      >
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            x-large
-            v-on="on"
-          >
-            <v-avatar
-              color="grey lighten-2"
+      <div style="margin-right: 10px">
+        <v-menu
+          bottom
+          min-width="200px"
+          rounded
+          offset-y
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              x-large
+              v-on="on"
             >
-              <v-img v-if="user" :src="user.avatar"></v-img>
-              <span v-else class="primary--text">登录</span>
-            </v-avatar>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-list-item-content class="justify-center">
-            <div class="mx-auto text-center">
-              <div v-if="user">
-<!--                <v-btn-->
-<!--                  depressed-->
-<!--                  rounded-->
-<!--                  text>-->
-<!--                  查看日志-->
-<!--                </v-btn>-->
-<!--                <v-divider class="my-3"></v-divider>-->
-<!--                <v-btn-->
-<!--                  depressed-->
-<!--                  rounded-->
-<!--                  text>-->
-<!--                  更改容器设置-->
-<!--                </v-btn>-->
-<!--                <v-divider class="my-3"></v-divider>-->
+              <v-avatar
+                color="grey lighten-2"
+              >
+                <v-img v-if="user" :src="user.avatar"></v-img>
+                <span v-else class="primary--text">登录</span>
+              </v-avatar>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-list-item-content class="justify-center">
+              <div class="mx-auto text-center">
+                <div v-if="user">
+                  <v-btn
+                    depressed
+                    rounded
+                    text
+                    @click="removeTaskDialogVisible =true">
+                    删除任务
+                  </v-btn>
+                  <v-divider class="my-3"></v-divider>
+                  <v-btn
+                    @click.stop="logOut"
+                    depressed
+                    rounded
+                    text>
+                    退出登录
+                  </v-btn>
+                </div>
                 <v-btn
+                  v-else
                   depressed
                   rounded
                   text
-                  @click="removeTaskDialogVisible =true">
-                  删除任务
-                </v-btn>
-                <v-divider class="my-3"></v-divider>
-                <v-btn
-                  @click.stop="logOut"
-                  depressed
-                  rounded
-                  text>
-                  退出登录
+                  @click.stop="showLoginDialog"
+                >
+                  立即登录
                 </v-btn>
               </div>
-              <v-btn
-                v-else
-                depressed
-                rounded
-                text
-                @click.stop="showLoginDialog"
-              >
-                立即登录
-              </v-btn>
-            </div>
-          </v-list-item-content>
-        </v-card>
-      </v-menu>
+            </v-list-item-content>
+          </v-card>
+        </v-menu>
+      </div>
     </v-app-bar>
 
     <v-main>
