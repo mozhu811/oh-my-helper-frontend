@@ -67,6 +67,15 @@
     </v-app-bar>
 
     <v-main>
+      <!-- 底部按钮 -->
+      <v-btn fab dark large color="pink" fixed right bottom>
+        <v-icon dark>mdi-heart</v-icon>
+      </v-btn>
+
+      <!-- 中间按钮 -->
+
+      <!-- 顶部按钮 -->
+
       <router-view/>
     </v-main>
 
