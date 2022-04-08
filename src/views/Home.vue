@@ -11,16 +11,25 @@
       @click.stop="createTaskDialogVisible = true"
     >
       <v-icon dark>
-        mdi-plus
+        {{ user && user.configId ? 'mdi-pencil' : 'mdi-plus'}}
       </v-icon>
     </v-btn>
 
     <div class="mt-5">
       <v-row>
-        <v-col cols="12" sm="6" md="6" lg="4" xl="3" v-for="(item, i) in users" :key="i">
+        <v-col cols="12" sm="6" md="6" lg="4" xl="3" v-for="(item, i) in users.records" :key="i">
           <card :item="item"></card>
         </v-col>
       </v-row>
+    </div>
+
+    <div
+      style="margin-top: 20px">
+      <v-pagination
+        v-model="pageInfo.page"
+        :length="users.pages"
+        total-visible="7"
+      ></v-pagination>
     </div>
 
     <v-overlay
@@ -190,7 +199,7 @@
                     label="Server酱SendKey"
                     hint="Server酱SendKey。详情请前往官网 https://sct.ftqq.com/"
                     :rules="[rules.required]"
-                    v-model="config.scKey"
+                    v-model="config.pushConfig.scKey"
                   ></v-text-field>
                 </v-col>
 
@@ -203,7 +212,7 @@
                     label="Telegram bot token"
                     hint="BotFather 分配的 Token"
                     :rules="[rules.required]"
-                    v-model="config.tgBotToken"
+                    v-model="config.pushConfig.tgBotToken"
                   ></v-text-field>
                 </v-col>
 
@@ -215,7 +224,7 @@
                     label="Telegram user ID"
                     hint="Telegram 用户的数字 ID"
                     :rules="[rules.required]"
-                    v-model="config.tgBotChatId"
+                    v-model="config.pushConfig.tgBotChatId"
                   ></v-text-field>
                 </v-col>
 
@@ -227,7 +236,7 @@
                     label="企业微信 Corp ID"
                     hint="企业微信 Corp ID"
                     :rules="[rules.required]"
-                    v-model="config.corpId"
+                    v-model="config.pushConfig.corpId"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -238,7 +247,7 @@
                     label="企业微信 Corp Secret"
                     hint="企业微信 Corp Secret"
                     :rules="[rules.required]"
-                    v-model="config.corpSecret"
+                    v-model="config.pushConfig.corpSecret"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -249,7 +258,7 @@
                     label="企业微信 Agent ID"
                     hint="企业微信 Agent ID"
                     :rules="[rules.required]"
-                    v-model="config.agentId"
+                    v-model="config.pushConfig.agentId"
                   ></v-text-field>
                 </v-col>
                 <v-col
@@ -260,7 +269,7 @@
                     label="企业微信 Media ID"
                     hint="素材管理中的图片Media ID。在【管理工具】-【图片】中找到您需要的图片，右键获取图片链接，即可在链接中看到 media_id 参数的值。"
                     :rules="[rules.required]"
-                    v-model="config.mediaId"
+                    v-model="config.pushConfig.mediaId"
                   ></v-text-field>
                 </v-col>
 
@@ -272,7 +281,7 @@
                     label="Device key"
                     hint="Bark App 分配的 Device key。只填写 device_key 即可，不需要其他内容。"
                     :rules="[rules.required]"
-                    v-model="config.barkDeviceKey"
+                    v-model="config.pushConfig.barkDeviceKey"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -306,6 +315,10 @@ export default {
   },
   data () {
     return {
+      pageInfo: {
+        page: 1,
+        size: 30
+      },
       createTaskLoading: false,
       snackbarMsg: '',
       snackbar: false,
@@ -378,22 +391,23 @@ export default {
         donateCoinStrategy: 0,
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36',
         skipTask: false,
-        tgBotToken: null,
-        tgBotChatId: null,
-        scKey: null,
-        corpId: null,
-        corpSecret: null,
-        agentId: null,
-        mediaId: null,
-        barkDeviceKey: null,
-        biliPush: false,
+        pushConfig: {
+          tgBotToken: null,
+          tgBotChatId: null,
+          scKey: null,
+          corpId: null,
+          corpSecret: null,
+          agentId: null,
+          mediaId: null,
+          barkDeviceKey: null
+        },
         followDeveloper: false
       }
 
     }
   },
   mounted () {
-    this.listUsers()
+    this.listUsers(this.pageInfo)
   },
   methods: {
     ...mapMutations(['listUsers']),
@@ -405,7 +419,7 @@ export default {
           this.snackbarMsg = '😃 创建成功'
           this.snackbar = true
           this.createTaskDialogVisible = false
-          this.listUsers()
+          this.listUsers({ page: 1, size: 30 })
         }).finally(() => {
           this.createTaskLoading = false
         })
@@ -423,10 +437,10 @@ export default {
       }
     },
     pushChannel: function (newVal, oldVal) {
-      if (newVal === -1) {
-        this.config.biliPush = true
-      }
       this.$refs.createTaskForm.resetValidation()
+    },
+    'pageInfo.page': function (newVal, oldVal) {
+      this.listUsers(this.pageInfo)
     }
   },
   computed: {

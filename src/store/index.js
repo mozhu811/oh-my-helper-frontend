@@ -7,16 +7,16 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     user: null,
-    users: [],
+    users: {},
     screenLoading: false
   },
   mutations: {
     setUser (state, user) {
       state.user = user
     },
-    listUsers: (state) => {
+    listUsers: (state, pageInfo) => {
       state.screenLoading = true
-      axios.get('bilibili/users').then(res => {
+      axios.get(`bilibili/users?page=${pageInfo.page}&size=${pageInfo.size}`).then(res => {
         state.users = res.data
       }).finally(() => {
         state.screenLoading = false

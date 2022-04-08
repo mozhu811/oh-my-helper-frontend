@@ -17,7 +17,8 @@
           <v-card-subtitle>
             <div v-if="item.medals.length > 0" style="display: flex">
               <medal v-for="(medal, index) in item.medals" :key="index" :name="medal.name" :level="medal.level"
-              :color-border="medal.colorBorder" :color-start="medal.colorStart" :color-end="medal.colorEnd"></medal>
+                     :color-border="medal.colorBorder" :color-start="medal.colorStart"
+                     :color-end="medal.colorEnd"></medal>
             </div>
             <div v-else><br></div>
           </v-card-subtitle>
@@ -65,6 +66,7 @@
 
 <script>
 import Medal from '@/components/Medal'
+
 export default {
   components: { Medal },
   props: {
@@ -88,14 +90,21 @@ export default {
         }
       })
     },
-    countChinese (str) {
-      const m = str.match(/[\u4e00-\u9fff\uf900-\ufaff]/g)
-      return (!m ? 0 : m.length)
+    countChar (str) {
+      let len = 0
+      for (let i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) > 127 || str.charCodeAt(i) === 94) {
+          len += 2
+        } else {
+          len++
+        }
+      }
+      return len
     }
   },
   computed: {
     cardTitleClass: function () {
-      if (this.countChinese(this.item.username) > 7 || this.item.username.length >= 10) {
+      if (this.countChar(this.item.username) <= 14) {
         return 'text-md-h6 text-sm-subtitle-1 font-weight-medium'
       }
       return 'text-md-h5 font-weight-medium'
@@ -111,12 +120,8 @@ export default {
       return 'https://bilibili-cruii-io-1251547651.cos.ap-chengdu.myqcloud.com/avatars/' + this.item.dedeuserid + '.png'
     },
     username: function () {
-      if (this.countChinese(this.item.username) > 7) {
+      if (this.countChar(this.item.username) >= 14) {
         return this.item.username.substr(0, 7) + '..'
-      } else if (this.countChinese(this.item.username) >= 3 && this.item.username.length >= 10) {
-        return this.item.username.substr(0, 8) + '..'
-      } else if (this.item.username.length >= 14) {
-        return this.item.username.substr(0, 14) + '..'
       }
       return this.item.username
     },

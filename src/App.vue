@@ -55,7 +55,7 @@
                   depressed
                   rounded
                   text
-                  @click.stop="showLoginDialog"
+                  @click="showLoginDialog"
                 >
                   立即登录
                 </v-btn>
@@ -111,6 +111,17 @@
             <div class="qrcode-con">
               <i class="tv-icon"/>
               <div class="qrcode-box">
+                <v-overlay
+                  :absolute="true"
+                  :value="overlay"
+                >
+                  <v-progress-circular
+                    indeterminate
+                    size="50"
+                    color="white"
+                  >
+                  </v-progress-circular>
+                </v-overlay>
                 <div class="qrcode-img">
                   <v-img height="140" width="140"
                          :src="qrCode"/>
@@ -190,6 +201,7 @@ export default {
       level: null
     },
     code: -1,
+    overlay: false,
     snackbarMsg: '',
     snackbar: false,
     removeTaskDialogVisible: false,
@@ -231,18 +243,22 @@ export default {
         this.timer = setInterval(() => {
           this.$http.get(`bilibili/login?oauthKey=${oauthKey}`).then(res => {
             if (res.data.code === 0) {
-              this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/', '.cruii.io')
-              this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/', '.cruii.io')
-              this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/', '.cruii.io')
-              // this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
-              // this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
-              // this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
+              this.overlay = false
+              // this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/', '.cruii.io')
+              // this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/', '.cruii.io')
+              // this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/', '.cruii.io')
+              this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
+              this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
+              this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
               clearInterval(this.timer)
               this.getBilibiliUser()
               this.loginDialogVisible = false
             } else if (res.data.code === -2) {
               this.overdue = true
+              this.overlay = false
               clearInterval(this.timer)
+            } else if (res.data.code === -5) {
+              this.overlay = true
             }
           })
         }, 1000)
@@ -272,7 +288,7 @@ export default {
       this.$http.delete('tasks').then(res => {
         this.snackbarMsg = '😃 删除成功'
         this.snackbar = true
-        this.listUsers()
+        this.listUsers({ page: 1, size: 30 })
       }).finally(() => {
         this.removeTaskDialogVisible = false
         this.removeTaskLoading = false
