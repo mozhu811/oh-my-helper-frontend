@@ -6,6 +6,7 @@ import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import './assets/css/global.less'
 import store from './store'
+import '@mdi/font/css/materialdesignicons.css'
 Vue.use(VueCookies)
 axios.defaults.withCredentials = true
 Vue.prototype.$http = axios
