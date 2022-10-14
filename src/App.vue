@@ -190,6 +190,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+
 const ONE_MONTH = 60 * 60 * 24 * 31
 export default {
   name: 'App',
@@ -237,19 +238,19 @@ export default {
     ...mapMutations(['setUser', 'listUsers']),
     async getQrCode () {
       this.overdue = false
-      await this.$http.get('bilibili/qrCode').then(res => {
+      await this.axios.get('bilibili/qrCode').then(res => {
         this.qrCode = res.data.qrCodeImg
-        const oauthKey = res.data.oauthKey
+        const qrCodeKey = res.data.qrCodeKey
         this.timer = setInterval(() => {
-          this.$http.get(`bilibili/login?oauthKey=${oauthKey}`).then(res => {
+          this.axios.get(`bilibili/login?qrCodeKey=${qrCodeKey}`).then(res => {
             if (res.data.code === 0) {
               this.overlay = false
-              this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/', '.cruii.io')
-              this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/', '.cruii.io')
-              this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/', '.cruii.io')
-              // this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
-              // this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
-              // this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
+              // this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/', '.cruii.io')
+              // this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/', '.cruii.io')
+              // this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/', '.cruii.io')
+              this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
+              this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
+              this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
               clearInterval(this.timer)
               this.getBilibiliUser()
               this.loginDialogVisible = false
@@ -272,7 +273,7 @@ export default {
       const dedeuserid = this.$cookies.get('dedeuserid')
       const sessdata = this.$cookies.get('sessdata')
       if (dedeuserid && sessdata) {
-        await this.$http.get(`bilibili/user?dedeuserid=${dedeuserid}&sessdata=${sessdata}`).then(res => {
+        await this.axios.get(`bilibili/user?dedeuserid=${dedeuserid}&sessdata=${sessdata}`).then(res => {
           this.setUser(res.data)
         }).catch(err => {
           if (err.response.status === 401) {
@@ -285,10 +286,10 @@ export default {
     },
     removeTask () {
       this.removeTaskLoading = true
-      this.$http.delete('tasks').then(res => {
+      this.axios.delete('tasks').then(res => {
         this.snackbarMsg = '😃 删除成功'
         this.snackbar = true
-        this.listUsers({ page: 1, size: 30 })
+        this.listUsers({ page: 1, size: 36 })
       }).finally(() => {
         this.removeTaskDialogVisible = false
         this.removeTaskLoading = false

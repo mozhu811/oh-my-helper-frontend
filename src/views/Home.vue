@@ -317,7 +317,7 @@ export default {
     return {
       pageInfo: {
         page: 1,
-        size: 30
+        size: 36
       },
       createTaskLoading: false,
       snackbarMsg: '',
@@ -419,7 +419,7 @@ export default {
           this.snackbarMsg = '😃 创建成功'
           this.snackbar = true
           this.createTaskDialogVisible = false
-          this.listUsers({ page: 1, size: 30 })
+          this.listUsers({ page: 1, size: 36 })
         }).finally(() => {
           this.createTaskLoading = false
         })
