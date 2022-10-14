@@ -107,7 +107,7 @@
     >
       <v-card>
         <v-card-text>
-          <div class="qrcode-login">
+          <div v-if="isQr" class="qrcode-login">
             <div class="qrcode-con">
               <i class="tv-icon"/>
               <div class="qrcode-box">
@@ -139,9 +139,33 @@
                   扫码登录
                   <br>
                   或扫码下载APP
+                  <br>
+<!--                  <a @click="isQr = false">扫码不可用？手动登录</a>-->
                 </p>
               </div>
             </div>
+          </div>
+
+          <div v-else>
+            <v-text-field
+              label="DEDEUSERID"
+              hint="你的B站数字ID"
+              v-model="credential.dedeuserid"
+            ></v-text-field>
+            <v-text-field
+              label="SESSDATA"
+              hint="Cookie中的SESSDATA"
+              v-model="credential.sesdata"
+            ></v-text-field>
+            <v-text-field
+              label="BILIJCT"
+              hint="Cookie中的BILIJCT"
+              v-model="credential.biliJct"
+            ></v-text-field>
+            <v-card-actions>
+              <v-spacer/>
+              <v-btn>登录</v-btn>
+            </v-card-actions>
           </div>
         </v-card-text>
       </v-card>
@@ -156,7 +180,10 @@
         <v-card-title class="text-h5">
           删除任务
         </v-card-title>
-        <v-card-text><v-icon left color="orange">mdi-alert</v-icon>确认删除任务？该操作不可逆</v-card-text>
+        <v-card-text>
+          <v-icon left color="orange">mdi-alert</v-icon>
+          确认删除任务？该操作不可逆
+        </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -209,7 +236,13 @@ export default {
     loginDialogVisible: false,
     removeTaskLoading: false,
     overdue: true,
+    isQr: true,
     qrCode: null,
+    credential: {
+      dedeuserid: '',
+      sesdata: '',
+      biliJct: ''
+    },
     icons: [
       {
         icon: 'mdi-qqchat',
@@ -254,11 +287,11 @@ export default {
               clearInterval(this.timer)
               this.getBilibiliUser()
               this.loginDialogVisible = false
-            } else if (res.data.code === -2) {
+            } else if (res.data.code === 86038) {
               this.overdue = true
               this.overlay = false
               clearInterval(this.timer)
-            } else if (res.data.code === -5) {
+            } else if (res.data.code === 86090) {
               this.overlay = true
             }
           })
@@ -318,7 +351,7 @@ export default {
 }
 </script>
 <style scoped>
-  .foot-btn{
-    position: fixed;
-  }
+.foot-btn {
+  position: fixed;
+}
 </style>
