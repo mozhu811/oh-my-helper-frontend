@@ -140,7 +140,7 @@
                   <br>
                   或扫码下载APP
                   <br>
-<!--                  <a @click="isQr = false">扫码不可用？手动登录</a>-->
+                  <!--                  <a @click="isQr = false">扫码不可用？手动登录</a>-->
                 </p>
               </div>
             </div>
@@ -268,7 +268,7 @@ export default {
     this.getBilibiliUser()
   },
   methods: {
-    ...mapMutations(['setUser', 'listUsers']),
+    ...mapMutations(['setUser', 'listUsers', 'setConfigId']),
     async getQrCode () {
       this.overdue = false
       await this.axios.get('bilibili/qrCode').then(res => {
@@ -319,10 +319,14 @@ export default {
     },
     removeTask () {
       this.removeTaskLoading = true
-      this.axios.delete('tasks').then(res => {
+      this.axios.delete(`/configs/task?dedeuserid=${this.$cookies.get('dedeuserid')}`).then(res => {
         this.snackbarMsg = '😃 删除成功'
+        this.setConfigId(null)
         this.snackbar = true
-        this.listUsers({ page: 1, size: 36 })
+        this.listUsers({
+          page: 1,
+          size: 36
+        })
       }).finally(() => {
         this.removeTaskDialogVisible = false
         this.removeTaskLoading = false

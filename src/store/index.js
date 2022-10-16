@@ -7,12 +7,16 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     user: null,
+    configId: null,
     users: {},
     screenLoading: false
   },
   mutations: {
     setUser (state, user) {
       state.user = user
+    },
+    setConfigId (state, configId) {
+      state.configId = configId
     },
     listUsers: (state, pageInfo) => {
       state.screenLoading = true
@@ -26,8 +30,6 @@ export default new Vuex.Store({
       state.screenLoading = data
     }
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: {},
+  modules: {}
 })

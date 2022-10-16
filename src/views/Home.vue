@@ -4,15 +4,15 @@
       v-show="!screenLoading"
       :disabled="!user"
       class="mx-2"
-      fab
       :dark="user !== null"
       color="pink"
       elevation="10"
       @click.stop="createTaskDialogVisible = true"
     >
       <v-icon dark>
-        {{ user && user.configId ? 'mdi-pencil' : 'mdi-plus'}}
+        {{ user && configId ? 'mdi-pencil' : 'mdi-plus' }}
       </v-icon>
+      {{ user && configId ? '编辑任务' : '新增任务' }}
     </v-btn>
 
     <div class="mt-5">
@@ -415,11 +415,18 @@ export default {
       const valid = this.$refs.createTaskForm.validate()
       if (valid) {
         this.createTaskLoading = true
-        this.$http.post('tasks', this.config).then(res => {
+        // if (this.pushChannel === -1) {
+        //   this.config.pushConfig = null
+        // }
+        this.axios.post('/configs/task', this.config).then(res => {
           this.snackbarMsg = '😃 创建成功'
           this.snackbar = true
           this.createTaskDialogVisible = false
-          this.listUsers({ page: 1, size: 36 })
+          this.user.configId = res.data.id
+          this.listUsers({
+            page: 1,
+            size: 36
+          })
         }).finally(() => {
           this.createTaskLoading = false
         })
@@ -437,6 +444,9 @@ export default {
       }
     },
     pushChannel: function (newVal, oldVal) {
+      if (newVal === -1) {
+        this.config.pushConfig = null
+      }
       this.$refs.createTaskForm.resetValidation()
     },
     'pageInfo.page': function (newVal, oldVal) {
@@ -444,7 +454,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'users', 'screenLoading'])
+    ...mapState(['user', 'users', 'screenLoading','configId'])
   }
 }
 </script>
