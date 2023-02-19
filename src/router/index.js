@@ -1,19 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import ContainerLog from '@/views/TaskLog'
+import Bilibili from '../views/Bilibili.vue'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'home',
+    redirect: 'bilibili'
   },
   {
-    path: '/logs',
-    name: 'logs',
-    component: ContainerLog
+    path: '/bilibili',
+    name: 'bilibili',
+    component: Bilibili
   }
 ]
 

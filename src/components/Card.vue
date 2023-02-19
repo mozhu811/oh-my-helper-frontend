@@ -1,24 +1,29 @@
 <template>
   <div>
     <v-card
-      :color="item.isLogin ? item.level === 6 ? 'red lighten-1' : 'primary lighten-1' : 'grey darken-2'"
+      :style="backgroundStyle"
+      :class="item.isLogin?'scale-transition' : 'scale-transition'"
       dark
-      elevation="10"
       shaped
       max-width="450"
+      transition="scale-transition"
+      @mouseleave.stop="show=false"
     >
-      <div class="d-flex flex-no-wrap justify-space-between">
+      <div class="d-flex justify-space-between">
         <div>
           <v-card-title
-            class="text-md-h5 font-weight-medium"
+            class="text-md-h5 font-weight-medium card-title"
             v-html="username"
           >
           </v-card-title>
           <v-card-subtitle>
-            <div v-if="item.medals.length > 0" style="display: flex">
-              <medal v-for="(medal, index) in item.medals" :key="index" :name="medal.name" :level="medal.level"
+            <div v-if="item.medals && JSON.parse(item.medals).length > 0" style="display: flex">
+              <medal v-for="(medal, index) in JSON.parse(item.medals)" :key="index" :name="medal.name"
+                     :level="medal.level"
                      :color-border="medal.colorBorder" :color-start="medal.colorStart"
-                     :color-end="medal.colorEnd"></medal>
+                     :color-end="medal.colorEnd">
+                {{ medal }}
+              </medal>
             </div>
             <div v-else><br></div>
           </v-card-subtitle>
@@ -32,7 +37,7 @@
           bottom
           class="ma-3"
           offset-x="40"
-          offset-y="60"
+          offset-y="70"
         >
           <template v-slot:badge>
             <v-avatar>
@@ -41,25 +46,40 @@
             </v-avatar>
           </template>
 
-          <v-avatar size="125">
+          <v-avatar size="120">
             <v-img :src="avatarUrl"/>
           </v-avatar>
         </v-badge>
       </div>
       <v-card-actions>
-        <!--        <v-btn-->
-        <!--          class="ml-2 mt-5"-->
-        <!--          outlined-->
-        <!--          rounded-->
-        <!--          small-->
-        <!--          :disabled="!activeLogBtn"-->
-        <!--          @click="goLogPage(item.dedeuserid)"-->
-        <!--        >-->
-        <!--          查看日志-->
-        <!--        </v-btn>-->
         <v-spacer></v-spacer>
+
+        <v-btn
+          icon
+          @click="show = !show"
+        >
+          <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+        </v-btn>
       </v-card-actions>
 
+      <v-expand-transition>
+        <div v-show="show">
+          <v-divider></v-divider>
+
+          <v-card-text>
+            {{ item.sign }}
+          </v-card-text>
+        </div>
+      </v-expand-transition>
+
+      <div v-show="!item.isLogin" class="seal-text">
+        <h1 style="text-align: center;
+         font-weight: bold;
+         font-size: 48px;
+         color: gainsboro;
+         -webkit-text-stroke: 1px lightgray;
+         -webkit-text-fill-color: transparent;">Expired</h1>
+      </div>
     </v-card>
   </div>
 </template>
@@ -78,7 +98,9 @@ export default {
       selectedItem: '',
       menuList: [
         '重新部署'
-      ]
+      ],
+      show: false,
+      boxShadow: '0 0 10px #8f7eff'
     }
   },
   methods: {
@@ -110,11 +132,18 @@ export default {
       return 'text-md-h5 font-weight-medium'
     },
     cardContent: function () {
-      return `等级: <b>LV${this.item.level}</b>   硬币: <b>${this.item.coins || '——'}</b>
-                <br/>
-                当前经验: <b>${this.item.currentExp || '——'}</b>
-                <br/>升级还需: <b>${this.item.diffExp || '——'}</b>
-                <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
+      // return `等级: <b>LV${this.item.level}</b>   硬币: <b>${this.item.coins || '——'}</b>
+      //           <br/>
+      //           当前经验: <b>${this.item.currentExp || '——'}</b>
+      //           <br/>升级还需: <b>${this.item.diffExp || '——'}</b>
+      //           <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
+      return `<div style="display: flex; align-items: center">
+              <span>等级: </span>
+              <img src=/images/lv${this.item.level}.png style="width: 30px;padding: 1px" alt="6"/>
+              <span>硬币: <b>${this.item.coins || '——'}</b></span></div>
+              <span>当前经验: <b>${this.item.currentExp || '——'}</b></span>
+              <span><br/>升级还需: <b>${this.item.diffExp || '——'}</b></span>
+              <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
     },
     avatarUrl: function () {
       return 'https://bilibili-cruii-io-1251547651.cos.ap-chengdu.myqcloud.com/avatars/' + this.item.dedeuserid + '.png'
@@ -131,10 +160,71 @@ export default {
         return dedeuserid === this.item.dedeuserid
       }
       return false
+    },
+    backgroundStyle: function () {
+      if (this.item.isLogin) {
+        // if (this.item.level === 6) {
+        return 'background-image: linear-gradient(315deg, #fc6076 0%, #ff9a44 100%);' +
+          // 'box-shadow' + this.boxShadow
+          'box-shadow: 0px 10px 20px #e74e34;'
+        // }
+        // return 'background-color: #f794a4;background-image: linear-gradient(315deg, #f794a4 0%, #fdd6bd 100%);' +
+        //   'box-shadow: 0px 10px 20px #fdd6bd;'
+      }
+      return 'background-color: #9E9E9E;background: linear-gradient(to bottom right, #9E9E9E, #424242);' +
+        'box-shadow: 0px 10px 20px #424242;'
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
+.scale-transition {
+  transition: all 0.3s ease;
+}
+
+.scale-transition:hover {
+  transform: scale(1.03);
+}
+
+.seal {
+  position: relative;
+}
+
+.seal-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  text-align: center;
+}
+
+.dynamic-shadow {
+  animation: change-shadow 5s linear infinite;
+}
+
+@keyframes change-shadow {
+  0% {
+    box-shadow: 0 0 10px #ff9a44;
+  }
+  25% {
+    box-shadow: 0 0 10px #fc6076;
+  }
+  50% {
+    box-shadow: 0 0 10px #db5e77;
+  }
+  75% {
+    box-shadow: 0 0 10px #e74e34;
+  }
+  100% {
+    box-shadow: 0 0 10px #ff9a44;
+  }
+}
+
+.card-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
 </style>

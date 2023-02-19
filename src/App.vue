@@ -1,106 +1,78 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <i style="font-size: 40px; padding-right: 10px" class="fa-brands fa-bilibili"></i>
-      <v-toolbar-title class="font-weight-bold">Bilibili Helper Hub</v-toolbar-title>
-      <v-spacer></v-spacer>
-
-      <div style="margin-right: 10px">
-        <v-menu
-          bottom
-          min-width="200px"
-          rounded
-          offset-y
-        >
-          <template v-slot:activator="{ on }">
-            <v-btn
-              icon
-              x-large
-              v-on="on"
-            >
-              <v-avatar
-                color="grey lighten-2"
-              >
-                <v-img v-if="user" :src="user.avatar"></v-img>
-                <span v-else class="primary--text">登录</span>
-              </v-avatar>
-            </v-btn>
-          </template>
-          <v-card>
-            <v-list-item-content class="justify-center">
-              <div class="mx-auto text-center">
-                <div v-if="user">
-                  <v-btn
-                    depressed
-                    rounded
-                    text
-                    @click="removeTaskDialogVisible =true">
-                    删除任务
-                  </v-btn>
-                  <v-divider class="my-3"></v-divider>
-                  <v-btn
-                    @click.stop="logOut"
-                    depressed
-                    rounded
-                    text>
-                    退出登录
-                  </v-btn>
-                </div>
-                <v-btn
-                  v-else
-                  depressed
-                  rounded
-                  text
-                  @click="showLoginDialog"
-                >
-                  立即登录
-                </v-btn>
-              </div>
-            </v-list-item-content>
-          </v-card>
-        </v-menu>
-      </div>
+  <v-app style="background-image: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)">
+    <v-app-bar clipped-left app color="#f0945d" dark elevation="2">
+      <v-app-bar-title style="font-weight: bold;">
+        <span style="font-family: Verdana">Oh My Helper</span>
+      </v-app-bar-title>
     </v-app-bar>
-
-    <v-main>
-      <router-view/>
-    </v-main>
-
-    <v-footer
+    <v-navigation-drawer
+      clipped
+      v-model="drawer"
+      mini-variant
+      width="200"
+      color="#f0945d"
+      app
       dark
-      padless
     >
-      <v-card
-        flat
-        tile
-        width="100%"
-        class="primary white--text text-center"
-      >
-        <v-card-text>
-          <v-btn
-            v-for="item in icons"
-            :key="item.icon"
-            class="mx-4 white--text"
-            icon
-            @click="toUrl(item.url)"
-          >
-            <v-icon size="24px">
-              {{ item.icon }}
-            </v-icon>
-          </v-btn>
-        </v-card-text>
+      <v-list-item class="px-2">
+        <v-list-item-avatar>
+          <v-img :src="avatarUrl"></v-img>
+        </v-list-item-avatar>
 
-        <v-card-text class="white--text pt-0">
-          {{ new Date().getFullYear() }} — <strong>cruii.io</strong>
-        </v-card-text>
-        <v-divider/>
-      </v-card>
-    </v-footer>
+        <!--        <v-list-item-title><h4>{{ user ? user.nickname : '' }}</h4></v-list-item-title>-->
 
+        <!--        <v-btn-->
+        <!--          icon-->
+        <!--          @click.stop="mini = !mini"-->
+        <!--        >-->
+        <!--          <v-icon>mdi-chevron-left</v-icon>-->
+        <!--        </v-btn>-->
+      </v-list-item>
+
+      <v-divider></v-divider>
+      <v-list dense nav>
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          link
+          dense
+          class="elevation-1 mt-2"
+        >
+          <v-tooltip right color="#f0945d">
+            <template v-slot:activator="{ on, attrs }">
+              <v-list-item-icon
+                v-bind="attrs"
+                v-on="on">
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title><span style="font-size: 0.9rem;">{{ item.title }}</span></v-list-item-title>
+              </v-list-item-content>
+            </template>
+            <span style="font-size: 0.9rem;">{{ item.title }}</span>
+          </v-tooltip>
+        </v-list-item>
+      </v-list>
+      <template v-slot:append>
+<!--        <v-list-item class="elevation-1 mt-2">-->
+<!--          <v-list-item-icon>-->
+<!--            <v-icon>mdi-logout-variant</v-icon>-->
+<!--            <v-btn></v-btn>-->
+<!--          </v-list-item-icon>-->
+<!--        </v-list-item>-->
+<!--        <v-btn icon><v-icon>mdi-logout-variant</v-icon></v-btn>-->
+<!--        <div class="pa-2">-->
+<!--          <v-btn block>-->
+<!--            <v-icon>mdi-logout-variant</v-icon>-->
+<!--          </v-btn>-->
+<!--        </div>-->
+      </template>
+    </v-navigation-drawer>
+    <v-main>
+      <v-container ref="container" fluid>
+        <router-view/>
+      </v-container>
+    </v-main>
     <v-dialog
       v-model="loginDialogVisible"
       max-width="528px"
@@ -113,7 +85,7 @@
               <div class="qrcode-box">
                 <v-overlay
                   :absolute="true"
-                  :value="overlay"
+                  :value="loading"
                 >
                   <v-progress-circular
                     indeterminate
@@ -223,15 +195,19 @@ export default {
   name: 'App',
 
   data: () => ({
-    userInfo: {
-      username: null,
-      avatar: null,
-      level: null
-    },
+    menu: false,
     code: -1,
-    overlay: false,
+    loading: false,
     snackbarMsg: '',
     snackbar: false,
+    drawer: true,
+    items: [
+      {
+        title: '哔哩哔哩',
+        icon: 'fa-brands fa-bilibili'
+      }
+    ],
+    mini: true,
     removeTaskDialogVisible: false,
     loginDialogVisible: false,
     removeTaskLoading: false,
@@ -260,42 +236,60 @@ export default {
         icon: 'mdi-github',
         url: 'https://github.com/Cruii'
       }
-    ],
-    timer: null
+    ]
   }),
   mounted () {
     // 获取用户信息
     this.getBilibiliUser()
+    // this.updateCols()
   },
+  // watch: {
+  //   mini: function (val, oldVal) {
+  // this.updateCols()
+  // }
+  // },
   methods: {
-    ...mapMutations(['setUser', 'listUsers', 'setConfigId']),
+    ...mapMutations(['setUser', 'listUsers', 'setConfigId', 'setCols']),
+    // updateCols () {
+    //   const width = this.$refs.container.clientWidth
+    //   if (width < 600) {
+    //     this.setCols(12)
+    //   } else if (width < 960) {
+    //     this.setCols(6)
+    //   } else {
+    //     this.setCols(3)
+    //   }
+    // },
     async getQrCode () {
       this.overdue = false
       await this.axios.get('bilibili/qrCode').then(res => {
         this.qrCode = res.data.qrCodeImg
         const qrCodeKey = res.data.qrCodeKey
-        this.timer = setInterval(() => {
+        const login = () => {
           this.axios.get(`bilibili/login?qrCodeKey=${qrCodeKey}`).then(res => {
             if (res.data.code === 0) {
-              this.overlay = false
-              // this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/', '.cruii.io')
-              // this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/', '.cruii.io')
-              // this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/', '.cruii.io')
+              this.loading = false
               this.$cookies.set('dedeuserid', res.data.dedeuserid, ONE_MONTH * 12, '/')
               this.$cookies.set('sessdata', res.data.sessdata, ONE_MONTH * 12, '/')
               this.$cookies.set('biliJct', res.data.biliJct, ONE_MONTH * 12, '/')
-              clearInterval(this.timer)
               this.getBilibiliUser()
+              this.listUsers({
+                page: 1,
+                size: 36
+              })
               this.loginDialogVisible = false
             } else if (res.data.code === 86038) {
               this.overdue = true
-              this.overlay = false
-              clearInterval(this.timer)
+              this.loading = false
             } else if (res.data.code === 86090) {
-              this.overlay = true
+              this.loading = true
+              setTimeout(login, 1000)
+            } else {
+              setTimeout(login, 1000)
             }
           })
-        }, 1000)
+        }
+        login()
       })
     },
     showLoginDialog () {
@@ -306,15 +300,16 @@ export default {
       const dedeuserid = this.$cookies.get('dedeuserid')
       const sessdata = this.$cookies.get('sessdata')
       if (dedeuserid && sessdata) {
-        await this.axios.get(`bilibili/user?dedeuserid=${dedeuserid}&sessdata=${sessdata}`).then(res => {
+        try {
+          const res = await this.axios.get(`bilibili/user?dedeuserid=${dedeuserid}&sessdata=${sessdata}`)
           this.setUser(res.data)
-        }).catch(err => {
-          if (err.response.status === 401) {
-            this.snackbarMsg = err.response.data.message
+        } catch (e) {
+          if (e.response.status === 401) {
+            this.snackbarMsg = e.response.data.message
             this.snackbar = true
             this.logOut()
           }
-        })
+        }
       }
     },
     removeTask () {
@@ -343,19 +338,33 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user'])
-  },
-  watch: {
-    loginDialogVisible: function (newVal, oldVal) {
-      if (!newVal) {
-        clearInterval(this.timer)
-      }
+    ...mapState(['user']),
+    avatarUrl: function () {
+      return 'https://bilibili-cruii-io-1251547651.cos.ap-chengdu.myqcloud.com/avatars/' + this.$cookies.get('dedeuserid') + '.png'
     }
   }
 }
 </script>
-<style scoped>
+<style>
 .foot-btn {
   position: fixed;
 }
+
+.nav-drawer {
+  background-color: #f2f2f2;
+}
+
+.v-list-item__title {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.v-list-item__content {
+  padding: 8px 16px;
+}
+
+.v-app-bar-title__content {
+  width: 300px;
+}
+
 </style>

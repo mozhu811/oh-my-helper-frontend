@@ -1,29 +1,30 @@
 <template>
-  <v-container>
+  <div>
     <v-btn
       v-show="!screenLoading"
-      :disabled="!user"
+      :disabled="!$cookies.get('dedeuserid')"
       class="mx-2"
       :dark="user !== null"
-      color="pink"
+      color="#ee8c62"
       elevation="10"
       @click.stop="createTaskDialogVisible = true"
     >
       <v-icon dark>
-        {{ user && configId ? 'mdi-pencil' : 'mdi-plus' }}
+        {{ user && user.biliTaskConfigId ? 'mdi-pencil' : 'mdi-plus' }}
       </v-icon>
-      {{ user && configId ? '编辑任务' : '新增任务' }}
+      {{ user && user.biliTaskConfigId ? '编辑任务' : '新增任务' }}
     </v-btn>
 
     <div class="mt-5">
       <v-row>
-        <v-col cols="12" sm="6" md="6" lg="4" xl="3" v-for="(item, i) in users.records" :key="i">
+        <v-col cols="12" sm="6" md="6" lg="3" xl="3" v-for="(item, i) in users.records" :key="i">
           <card :item="item"></card>
         </v-col>
       </v-row>
     </div>
 
     <div
+      v-if="users.records && users.records.length > 0"
       style="margin-top: 20px">
       <v-pagination
         v-model="pageInfo.page"
@@ -33,12 +34,11 @@
     </div>
 
     <v-overlay
-      color="#212121"
       light opacity="0.10" :value="screenLoading">
       <v-progress-circular
         indeterminate
         size="100"
-        color="primary"
+        color="white"
       >
         <i class="fa-brands fa-bilibili"/>
       </v-progress-circular>
@@ -56,7 +56,7 @@
         <v-toolbar
           flat
           dark
-          color="primary"
+          style="background-image: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)"
         >
           <v-btn
             icon
@@ -294,6 +294,13 @@
         <div style="flex: 1 1 auto;"></div>
       </v-card>
     </v-dialog>
+
+    <!-- 页面内容 -->
+    <div v-if="hasError" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);color: white">
+      <h1>OOPS! 请求出错了</h1>
+      <p>{{ errorMessage }}</p>
+    </div>
+
     <v-snackbar
       v-model="snackbar"
       top
@@ -302,10 +309,11 @@
     >
       {{ snackbarMsg }}
     </v-snackbar>
-  </v-container>
+  </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import Card from '@/components/Card'
 import { mapMutations, mapState } from 'vuex'
 
@@ -322,7 +330,6 @@ export default {
       createTaskLoading: false,
       snackbarMsg: '',
       snackbar: false,
-      items: [],
       sessdata: null,
       dedeuserid: null,
       biliJct: null,
@@ -402,11 +409,20 @@ export default {
           barkDeviceKey: null
         },
         followDeveloper: false
-      }
-
+      },
+      hasError: false,
+      errorMessage: ''
     }
   },
   mounted () {
+    // 在 mounted 钩子中添加事件监听器
+    this.$nextTick(() => {
+      Vue.prototype.$eventBus.$on('requestError', (errorMessage) => {
+        this.hasError = true
+        this.errorMessage = errorMessage
+      })
+    })
+
     this.listUsers(this.pageInfo)
   },
   methods: {
@@ -415,9 +431,6 @@ export default {
       const valid = this.$refs.createTaskForm.validate()
       if (valid) {
         this.createTaskLoading = true
-        // if (this.pushChannel === -1) {
-        //   this.config.pushConfig = null
-        // }
         this.axios.post('/configs/task', this.config).then(res => {
           this.snackbarMsg = '😃 创建成功'
           this.snackbar = true
@@ -454,7 +467,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'users', 'screenLoading','configId'])
+    ...mapState(['user', 'users', 'screenLoading', 'configId', 'cols'])
   }
 }
 </script>

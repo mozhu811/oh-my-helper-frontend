@@ -6,10 +6,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null,
-    configId: null,
-    users: {},
-    screenLoading: false
+    user: undefined,
+    configId: undefined,
+    users: [],
+    screenLoading: false,
+    cols: 12
   },
   mutations: {
     setUser (state, user) {
@@ -28,6 +29,10 @@ export default new Vuex.Store({
     },
     setScreenLoading: (state, data) => {
       state.screenLoading = data
+    },
+    setCols (state, cols) {
+      console.log(cols)
+      state.cols = cols
     }
   },
   actions: {},
