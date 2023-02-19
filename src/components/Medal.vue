@@ -6,7 +6,7 @@
         <span class="m-medal__fans-medal-content">{{ name }}</span>
       </div>
       <div class="m-medal__fans-medal-level" :style="'color:' + colorBorderHex">
-        {{ level }}
+        <div class="m-medal__fans-medal-level-text">{{ level }}</div>
       </div>
     </div>
   </div>

@@ -15,9 +15,9 @@
       {{ user && user.biliTaskConfigId ? '编辑任务' : '新增任务' }}
     </v-btn>
 
-    <div class="mt-5">
+    <div class="mt-5 d-flex">
       <v-row>
-        <v-col cols="12" sm="6" md="6" lg="3" xl="3" v-for="(item, i) in users.records" :key="i">
+        <v-col cols="12" sm="6" md="4" lg="3" xl="2" v-for="(item, i) in users.records" :key="i">
           <card :item="item"></card>
         </v-col>
       </v-row>

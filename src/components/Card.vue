@@ -2,21 +2,19 @@
   <div>
     <v-card
       :style="backgroundStyle"
-      :class="item.isLogin?'scale-transition' : 'scale-transition'"
+      class="scale-transition mx-auto"
       dark
       shaped
       max-width="450"
       transition="scale-transition"
       @mouseleave.stop="show=false"
     >
-      <div class="d-flex justify-space-between">
-        <div>
-          <v-card-title
-            class="text-md-h5 font-weight-medium card-title"
-            v-html="username"
-          >
-          </v-card-title>
-          <v-card-subtitle>
+      <v-list-item three-line>
+        <v-list-item-content>
+          <div class="mb-4 text-md-h6 card-title">
+            <span class="card-title" style="font-weight: bold">{{ username }}</span>
+          </div>
+          <v-list-item-title class="mb-1">
             <div v-if="item.medals && JSON.parse(item.medals).length > 0" style="display: flex">
               <medal v-for="(medal, index) in JSON.parse(item.medals)" :key="index" :name="medal.name"
                      :level="medal.level"
@@ -26,18 +24,27 @@
               </medal>
             </div>
             <div v-else><br></div>
-          </v-card-subtitle>
-          <v-card-text v-html="cardContent"></v-card-text>
-        </div>
-
+          </v-list-item-title>
+          <v-card-text style="margin: 0;padding: 0">
+            <div>
+              <v-row dense>
+                <v-col cols="12" col="12"><span style="vertical-align: middle">等级: </span><img
+                  src=/images/lv6.png style="height: 14px;padding-bottom:1px;vertical-align: middle" alt="6"/></v-col>
+                <v-col cols="12" col="12">硬币: <b>{{ this.item.coins || '——' }}</b></v-col>
+                <v-col cols="12" col="12"><span>当前经验: <b>{{ this.item.currentExp || '——' }}</b></span></v-col>
+                <v-col cols="12" col="12"><span>升级还需: <b>{{ this.item.diffExp || '——' }}</b></span></v-col>
+              </v-row>
+            </div>
+          </v-card-text>
+        </v-list-item-content>
         <v-badge
           :value="item.vipStatus === 1"
           avatar
           bordered
           bottom
-          class="ma-3"
-          offset-x="40"
-          offset-y="70"
+          class="mb-10"
+          offset-x="30"
+          offset-y="30"
         >
           <template v-slot:badge>
             <v-avatar>
@@ -50,7 +57,7 @@
             <v-img :src="avatarUrl"/>
           </v-avatar>
         </v-badge>
-      </div>
+      </v-list-item>
       <v-card-actions>
         <v-spacer></v-spacer>
 
@@ -137,21 +144,32 @@ export default {
       //           当前经验: <b>${this.item.currentExp || '——'}</b>
       //           <br/>升级还需: <b>${this.item.diffExp || '——'}</b>
       //           <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
-      return `<div style="display: flex; align-items: center">
-              <span>等级: </span>
-              <img src=/images/lv${this.item.level}.png style="width: 30px;padding: 1px" alt="6"/>
-              <span>硬币: <b>${this.item.coins || '——'}</b></span></div>
-              <span>当前经验: <b>${this.item.currentExp || '——'}</b></span>
-              <span><br/>升级还需: <b>${this.item.diffExp || '——'}</b></span>
-              <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
+
+      // return `<div>
+      //         <span>等级: </span>
+      //         <img src=/images/lv${this.item.level}.png style="width: 30px;padding: 1px" alt="6"/>
+      //         <span>硬币: <b>${this.item.coins || '——'}</b></span></div>
+      //         <span>当前经验: <b>${this.item.currentExp || '——'}</b></span>
+      //         <span><br/>升级还需: <b>${this.item.diffExp || '——'}</b></span>
+      //         <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
+
+      return `<div>
+      <v-row>
+      <v-col cols="12" col="12" lg="12"><span style="vertical-align: middle">等级: </span><img src=/images/lv${this.item.level}.png style="width: 30px;padding-bottom:1px;vertical-align: middle" alt="6"/></v-col>
+      <v-col cols="12" col="12">硬币: ${this.item.coins || '——'}</v-col>
+
+      <v-col col="12"><span>当前经验: <b>${this.item.currentExp || '——'}</b></span></v-col>
+      <v-col cols="12"><span><br/>升级还需: <b>${this.item.diffExp || '——'}</b></span></v-col>
+</v-row>
+      </div>`
     },
     avatarUrl: function () {
       return 'https://bilibili-cruii-io-1251547651.cos.ap-chengdu.myqcloud.com/avatars/' + this.item.dedeuserid + '.png'
     },
     username: function () {
-      if (this.countChar(this.item.username) >= 14) {
-        return this.item.username.substr(0, 7) + '..'
-      }
+      // if (this.countChar(this.item.username) >= 14) {
+      //   return this.item.username.substr(0, 7) + '..'
+      // }
       return this.item.username
     },
     activeLogBtn: function () {
@@ -225,6 +243,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  max-width: 150px;
 }
 </style>

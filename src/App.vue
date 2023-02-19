@@ -2,7 +2,7 @@
   <v-app style="background-image: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)">
     <v-app-bar clipped-left app color="#f0945d" dark elevation="2">
       <v-app-bar-title style="font-weight: bold;">
-        <span style="font-family: Verdana">Oh My Helper</span>
+        <span>Oh My Helper</span>
       </v-app-bar-title>
     </v-app-bar>
     <v-navigation-drawer
@@ -12,6 +12,9 @@
       width="200"
       color="#f0945d"
       app
+      hide-overlay
+      bottom
+      permanent
       dark
     >
       <v-list-item class="px-2">
