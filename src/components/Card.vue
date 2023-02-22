@@ -154,7 +154,10 @@ export default {
       }
     },
     signLabel: function () {
-      return this.item.sign.length < 1 ? '这个人非常懒，什么也没有写~\\(≧▽≦)/~' : this.item.sign
+      if (this.item.sign) {
+        return this.item.sign.length < 1 ? '这个人非常懒，什么也没有写~\\(≧▽≦)/~' : this.item.sign
+      }
+      return '这个人非常懒，什么也没有写~\\(≧▽≦)/~'
     },
     levelImg: function () {
       return `/images/lv${this.item.level}.png`
