@@ -19,7 +19,9 @@
     >
       <v-list-item class="px-2">
         <v-list-item-avatar>
-          <v-img :src="avatarUrl"></v-img>
+          <v-img v-if="user" :src="avatarUrl"></v-img>
+          <v-btn v-else icon class="primary--text " style="background-color: white"
+          @click="loginDialogVisible = true">登录</v-btn>
         </v-list-item-avatar>
 
         <!--        <v-list-item-title><h4>{{ user ? user.nickname : '' }}</h4></v-list-item-title>-->
@@ -45,7 +47,8 @@
             <template v-slot:activator="{ on, attrs }">
               <v-list-item-icon
                 v-bind="attrs"
-                v-on="on">
+                v-on="on"
+                @click="$router.push('/bilibili')">
                 <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
@@ -56,19 +59,24 @@
           </v-tooltip>
         </v-list-item>
       </v-list>
+
       <template v-slot:append>
-<!--        <v-list-item class="elevation-1 mt-2">-->
-<!--          <v-list-item-icon>-->
-<!--            <v-icon>mdi-logout-variant</v-icon>-->
-<!--            <v-btn></v-btn>-->
-<!--          </v-list-item-icon>-->
-<!--        </v-list-item>-->
-<!--        <v-btn icon><v-icon>mdi-logout-variant</v-icon></v-btn>-->
-<!--        <div class="pa-2">-->
-<!--          <v-btn block>-->
-<!--            <v-icon>mdi-logout-variant</v-icon>-->
-<!--          </v-btn>-->
-<!--        </div>-->
+        <v-list nav dense>
+          <!-- 退出登录 -->
+          <v-list-item link class="elevation-1">
+            <v-list-item-icon>
+              <v-icon @click="logOut">mdi-logout-variant</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title><span style="font-size: 0.9rem;">logout</span></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>mdi-robot-angry</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list>
       </template>
     </v-navigation-drawer>
     <v-main>

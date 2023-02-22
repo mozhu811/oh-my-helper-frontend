@@ -1,7 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Bilibili from '../views/Bilibili.vue'
+import Error from '@/views/Error.vue'
+
 Vue.use(VueRouter)
+const originalPush = VueRouter.prototype.push
+
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 const routes = [
   {
@@ -13,6 +20,11 @@ const routes = [
     path: '/bilibili',
     name: 'bilibili',
     component: Bilibili
+  },
+  {
+    path: '/error',
+    name: 'error',
+    component: Error
   }
 ]
 

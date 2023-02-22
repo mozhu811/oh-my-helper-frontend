@@ -295,12 +295,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- 页面内容 -->
-    <div v-if="hasError" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);color: white">
-      <h1>OOPS! 请求出错了</h1>
-      <p>{{ errorMessage }}</p>
-    </div>
-
     <v-snackbar
       v-model="snackbar"
       top
@@ -409,9 +403,7 @@ export default {
           barkDeviceKey: null
         },
         followDeveloper: false
-      },
-      hasError: false,
-      errorMessage: ''
+      }
     }
   },
   mounted () {

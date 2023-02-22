@@ -29,10 +29,15 @@
             <div>
               <v-row dense>
                 <v-col cols="12" col="12"><span style="vertical-align: middle">等级: </span><img
-                  src=/images/lv6.png style="height: 14px;padding-bottom:1px;vertical-align: middle" alt="6"/></v-col>
+                  :src="levelImg" style="height: 14px;padding-bottom:1px;vertical-align: middle" alt="6"/></v-col>
                 <v-col cols="12" col="12">硬币: <b>{{ this.item.coins || '——' }}</b></v-col>
                 <v-col cols="12" col="12"><span>当前经验: <b>{{ this.item.currentExp || '——' }}</b></span></v-col>
-                <v-col cols="12" col="12"><span>升级还需: <b>{{ this.item.diffExp || '——' }}</b></span></v-col>
+                <v-col cols="12" col="12">
+                  <span>升级还需: <b>{{ diffExpLabel }}</b></span>
+                </v-col>
+                <v-col cols="12" col="12">
+                  <span>距离升级: <b>{{ upgradeDaysLabel }}</b></span>
+                </v-col>
               </v-row>
             </div>
           </v-card-text>
@@ -74,7 +79,7 @@
           <v-divider></v-divider>
 
           <v-card-text>
-            {{ item.sign }}
+            {{ signLabel }}
           </v-card-text>
         </div>
       </v-expand-transition>
@@ -132,6 +137,28 @@ export default {
     }
   },
   computed: {
+    diffExpLabel: function () {
+      if (this.item.level >= 6) {
+        return 0
+      } else if (this.item.isLogin) {
+        return this.item.nextExp - this.item.currentExp
+      } else {
+        return '——'
+      }
+    },
+    upgradeDaysLabel: function () {
+      if (this.item.upgradeDays) {
+        return this.item.upgradeDays === -1 ? '你已经是最强的了' : this.item.upgradeDays + '天'
+      } else {
+        return '——'
+      }
+    },
+    signLabel: function () {
+      return this.item.sign.length < 1 ? '这个人非常懒，什么也没有写~\\(≧▽≦)/~' : this.item.sign
+    },
+    levelImg: function () {
+      return `/images/lv${this.item.level}.png`
+    },
     cardTitleClass: function () {
       if (this.countChar(this.item.username) <= 14) {
         return 'text-md-h6 text-sm-subtitle-1 font-weight-medium'
@@ -139,27 +166,13 @@ export default {
       return 'text-md-h5 font-weight-medium'
     },
     cardContent: function () {
-      // return `等级: <b>LV${this.item.level}</b>   硬币: <b>${this.item.coins || '——'}</b>
-      //           <br/>
-      //           当前经验: <b>${this.item.currentExp || '——'}</b>
-      //           <br/>升级还需: <b>${this.item.diffExp || '——'}</b>
-      //           <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
-
-      // return `<div>
-      //         <span>等级: </span>
-      //         <img src=/images/lv${this.item.level}.png style="width: 30px;padding: 1px" alt="6"/>
-      //         <span>硬币: <b>${this.item.coins || '——'}</b></span></div>
-      //         <span>当前经验: <b>${this.item.currentExp || '——'}</b></span>
-      //         <span><br/>升级还需: <b>${this.item.diffExp || '——'}</b></span>
-      //         <br/>距离升级: <b>${this.item.upgradeDays ? this.item.upgradeDays + ' 天' : '——'}`
-
       return `<div>
       <v-row>
       <v-col cols="12" col="12" lg="12"><span style="vertical-align: middle">等级: </span><img src=/images/lv${this.item.level}.png style="width: 30px;padding-bottom:1px;vertical-align: middle" alt="6"/></v-col>
       <v-col cols="12" col="12">硬币: ${this.item.coins || '——'}</v-col>
 
       <v-col col="12"><span>当前经验: <b>${this.item.currentExp || '——'}</b></span></v-col>
-      <v-col cols="12"><span><br/>升级还需: <b>${this.item.diffExp || '——'}</b></span></v-col>
+      <v-col cols="12"><span><br/>升级还需: <b>${this.item.diffExp || '***'}</b></span></v-col>
 </v-row>
       </div>`
     },
