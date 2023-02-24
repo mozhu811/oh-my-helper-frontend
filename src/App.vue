@@ -19,9 +19,10 @@
     >
       <v-list-item class="px-2">
         <v-list-item-avatar>
-          <v-img v-if="user" :src="avatarUrl"></v-img>
+          <v-img v-if="credential.dedeuserid" :src="avatarUrl"></v-img>
           <v-btn v-else icon class="primary--text " style="background-color: white"
-          @click="loginDialogVisible = true">登录</v-btn>
+                 @click="showLoginDialog">登录
+          </v-btn>
         </v-list-item-avatar>
 
         <!--        <v-list-item-title><h4>{{ user ? user.nickname : '' }}</h4></v-list-item-title>-->
@@ -226,9 +227,9 @@ export default {
     isQr: true,
     qrCode: null,
     credential: {
-      dedeuserid: '',
-      sesdata: '',
-      biliJct: ''
+      dedeuserid: null,
+      sesdata: null,
+      biliJct: null
     },
     icons: [
       {
@@ -252,25 +253,9 @@ export default {
   mounted () {
     // 获取用户信息
     this.getBilibiliUser()
-    // this.updateCols()
   },
-  // watch: {
-  //   mini: function (val, oldVal) {
-  // this.updateCols()
-  // }
-  // },
   methods: {
     ...mapMutations(['setUser', 'listUsers', 'setConfigId', 'setCols']),
-    // updateCols () {
-    //   const width = this.$refs.container.clientWidth
-    //   if (width < 600) {
-    //     this.setCols(12)
-    //   } else if (width < 960) {
-    //     this.setCols(6)
-    //   } else {
-    //     this.setCols(3)
-    //   }
-    // },
     async getQrCode () {
       this.overdue = false
       await this.axios.get('bilibili/qrCode').then(res => {
@@ -307,20 +292,19 @@ export default {
       this.loginDialogVisible = true
       this.getQrCode()
     },
-    async getBilibiliUser () {
-      const dedeuserid = this.$cookies.get('dedeuserid')
-      const sessdata = this.$cookies.get('sessdata')
-      if (dedeuserid && sessdata) {
-        try {
-          const res = await this.axios.get(`bilibili/user?dedeuserid=${dedeuserid}&sessdata=${sessdata}`)
+    getBilibiliUser () {
+      this.credential.dedeuserid = this.$cookies.get('dedeuserid')
+      this.credential.sesdata = this.$cookies.get('sessdata')
+      if (this.credential.dedeuserid && this.credential.sesdata) {
+        this.axios.get(`bilibili/user?dedeuserid=${this.credential.dedeuserid}&sessdata=${this.credential.sesdata}`).then(res => {
           this.setUser(res.data)
-        } catch (e) {
+        }).catch(e => {
           if (e.response.status === 401) {
             this.snackbarMsg = e.response.data.message
             this.snackbar = true
             this.logOut()
           }
-        }
+        })
       }
     },
     removeTask () {
