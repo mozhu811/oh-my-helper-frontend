@@ -1,0 +1,40 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - name: Tar dist file
+      run: |
+        tar -zcvf omh-frontend.tar.gz dist
+    - name: Copy file to server
+      uses: garygrossgarten/github-action-scp@release
+      with:
+        local: 'omh-frontend.tar.gz'
+        remote: '/root/omh-frontend.tar.gz'
+        host: ${{ secrets.DEPLOY_SERVER_IP }}
+        username: ${{ secrets.DEPLOY_SERVER_USER }}
+        password: ${{ secrets.DEPLOY_SERVER_PASSWORD }}
+    - name: Deploy app
+      run: sshpass -p ${{ secrets.DEPLOY_SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.DEPLOY_SERVER_IP }} "cd ~ && ./deploy.sh"
