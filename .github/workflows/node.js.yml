@@ -23,6 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: cat VUE_APP_TIDIO_PUBLIC_KEY=${{ secrets.VUE_APP_TIDIO_PUBLIC_KEY }} > .env
     - run: npm ci
     - run: npm run build --if-present
     - name: Tar dist file
