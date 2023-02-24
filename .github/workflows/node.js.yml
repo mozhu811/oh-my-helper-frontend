@@ -34,8 +34,8 @@ jobs:
       with:
         local: 'omh-frontend.tar.gz'
         remote: '/root/omh-frontend.tar.gz'
-        host: ${{ DEPLOY_SERVER_IP }}
-        username: ${{ DEPLOY_SERVER_USER }}
-        password: ${{ DEPLOY_SERVER_PASSWORD }}
+        host: ${{ secrets.DEPLOY_SERVER_IP }}
+        username: ${{ secrets.DEPLOY_SERVER_USER }}
+        password: ${{ secrets.DEPLOY_SERVER_PASSWORD }}
     - name: Deploy app
       run: sshpass -p ${{ secrets.DEPLOY_SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.DEPLOY_SERVER_IP }} "cd ~ && ./deploy.sh"
