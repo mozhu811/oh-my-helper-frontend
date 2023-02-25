@@ -1,6 +1,9 @@
 <template>
   <v-app style="background-image: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)">
     <v-app-bar clipped-left app color="#f0945d" dark elevation="2">
+      <v-app-bar-nav-icon>
+        <v-icon size="40">mdi-robot-angry</v-icon>
+      </v-app-bar-nav-icon>
       <v-app-bar-title style="font-weight: bold;">
         <span>Oh My Helper</span>
       </v-app-bar-title>
@@ -255,7 +258,7 @@ export default {
     this.getBilibiliUser()
   },
   methods: {
-    ...mapMutations(['setUser', 'listUsers', 'setConfigId', 'setCols']),
+    ...mapMutations(['setUser', 'listUsers', 'setCols']),
     async getQrCode () {
       this.overdue = false
       await this.axios.get('bilibili/qrCode').then(res => {
@@ -311,7 +314,7 @@ export default {
       this.removeTaskLoading = true
       this.axios.delete(`/configs/task?dedeuserid=${this.$cookies.get('dedeuserid')}`).then(res => {
         this.snackbarMsg = '😃 删除成功'
-        this.setConfigId(null)
+        this.user.biliTaskConfigId = null
         this.snackbar = true
         this.listUsers({
           page: 1,
@@ -323,6 +326,8 @@ export default {
       })
     },
     logOut () {
+      this.credential.dedeuserid = null
+      this.credential.sesdata = null
       this.$cookies.remove('dedeuserid')
       this.$cookies.remove('sessdata')
       this.$cookies.remove('biliJct')
