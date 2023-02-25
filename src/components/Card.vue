@@ -5,17 +5,29 @@
       class="scale-transition mx-auto"
       dark
       shaped
-      max-width="450"
       transition="scale-transition"
       @mouseleave.stop="show=false"
     >
       <v-img
         :src="avatarUrl"
         height="200px"
-      ></v-img>
+      >
+        <template v-slot:placeholder>
+          <v-row
+            class="fill-height ma-0"
+            align="center"
+            justify="center"
+          >
+            <v-progress-circular
+              indeterminate
+              color="grey lighten-5"
+            ></v-progress-circular>
+          </v-row>
+        </template>
+      </v-img>
       <v-list-item three-line>
         <v-list-item-content>
-          <div class="mb-4 text-md-h6 card-title">
+          <div class="mb-4 text-md-h6">
             <span class="card-title" style="font-weight: bold">{{ username }}</span>
           </div>
           <v-list-item-title class="mb-1">
@@ -245,6 +257,5 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px;
 }
 </style>
