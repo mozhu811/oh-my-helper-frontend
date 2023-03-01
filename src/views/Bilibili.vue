@@ -1,19 +1,36 @@
 <template>
   <div>
-    <v-btn
-      v-show="!screenLoading"
-      :disabled="!$cookies.get('dedeuserid')"
-      class="mx-2"
-      :dark="user !== null"
-      color="#ee8c62"
-      elevation="10"
-      @click.stop="createTaskDialogVisible = true"
-    >
-      <v-icon dark>
-        {{ user && user.biliTaskConfigId ? 'mdi-pencil' : 'mdi-plus' }}
-      </v-icon>
-      {{ user && user.biliTaskConfigId ? '编辑任务' : '新增任务' }}
-    </v-btn>
+    <div v-if="user">
+      <v-btn
+        v-show="!screenLoading"
+        :disabled="!$cookies.get('dedeuserid')"
+        class="mx-2"
+        :dark="user !== null"
+        color="#ee8c62"
+        elevation="10"
+        @click.stop="createTaskDialogVisible = true"
+      >
+        <v-icon small dark>
+          {{ user && user.biliTaskConfigId ? 'mdi-pencil' : 'mdi-plus' }}
+        </v-icon>
+        {{ user && user.biliTaskConfigId ? '编辑任务' : '新增任务' }}
+      </v-btn>
+
+      <v-btn
+        v-show="!screenLoading && user.biliTaskConfigId"
+        :disabled="!user || !user.biliTaskConfigId"
+        class="mx-2"
+        color="#FC667A"
+        :dark="user !== null"
+        elevation="10"
+        @click.stop="removeTaskDialogVisible = true"
+      >
+        <v-icon small>
+          mdi-delete
+        </v-icon>
+        删除任务
+      </v-btn>
+    </div>
 
     <div class="mt-5 d-flex">
       <v-row>
@@ -295,6 +312,39 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog
+      v-model="removeTaskDialogVisible"
+      persistent
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          删除任务
+        </v-card-title>
+        <v-card-text>
+          <v-icon left color="orange">mdi-alert</v-icon>
+          确认删除任务？该操作不可逆
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="removeTaskDialogVisible = false"
+          >
+            取消
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            :loading="removeTaskLoading"
+            @click="removeTask"
+          >
+            确认
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-snackbar
       v-model="snackbar"
       top
@@ -321,6 +371,8 @@ export default {
         page: 1,
         size: 36
       },
+      removeTaskDialogVisible: false,
+      removeTaskLoading: false,
       createTaskLoading: false,
       snackbarMsg: '',
       snackbar: false,
@@ -439,6 +491,21 @@ export default {
     },
     resetTaskConfig () {
       this.config = this.$options.data().config
+    },
+    removeTask () {
+      this.removeTaskLoading = true
+      this.axios.delete(`/configs/task?dedeuserid=${this.$cookies.get('dedeuserid')}`).then(res => {
+        this.snackbarMsg = '😃 删除成功'
+        this.user.biliTaskConfigId = null
+        this.snackbar = true
+        this.listUsers({
+          page: 1,
+          size: 36
+        })
+      }).finally(() => {
+        this.removeTaskDialogVisible = false
+        this.removeTaskLoading = false
+      })
     }
   },
   watch: {

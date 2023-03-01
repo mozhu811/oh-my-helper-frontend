@@ -17,6 +17,7 @@ export default new Vuex.Store({
     },
     listUsers: (state, pageInfo) => {
       state.screenLoading = true
+      state.users = []
       axios.get(`bilibili/users?page=${pageInfo.page}&size=${pageInfo.size}`).then(res => {
         state.users = res.data
       }).finally(() => {
