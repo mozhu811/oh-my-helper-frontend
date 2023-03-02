@@ -34,7 +34,7 @@
 
     <div class="mt-5 d-flex">
       <v-row>
-        <v-col cols="12" sm="12" md="4" lg="3" xl="2" v-for="(item, i) in users.records" :key="i">
+        <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="2" v-for="(item, i) in users.records" :key="i">
           <card :item="item"></card>
         </v-col>
       </v-row>

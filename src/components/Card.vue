@@ -5,12 +5,12 @@
       class="scale-transition mx-auto"
       dark
       shaped
+      max-width="400"
       transition="scale-transition"
       @mouseleave.stop="show=false"
     >
       <v-img
         :src="avatarUrl"
-        height="200px"
       >
         <template v-slot:placeholder>
           <v-row
