@@ -15,23 +15,27 @@ export default new Vuex.Store({
     setUser (state, user) {
       state.user = user
     },
-    listUsers: (state, pageInfo) => {
-      state.screenLoading = true
-      state.users = []
-      axios.get(`bilibili/users?page=${pageInfo.page}&size=${pageInfo.size}`).then(res => {
-        state.users = res.data
-      }).finally(() => {
-        state.screenLoading = false
-      })
-    },
     setScreenLoading: (state, data) => {
       state.screenLoading = data
     },
     setCols (state, cols) {
-      console.log(cols)
       state.cols = cols
+    },
+    setUsers (state, users) {
+      state.users = users
     }
   },
-  actions: {},
+  actions: {
+    async listUsers ({ commit }, pageInfo) {
+      commit('setScreenLoading', true)
+      commit('setUsers', [])
+      try {
+        const res = await axios.get(`bilibili/users?page=${pageInfo.page}&size=${pageInfo.size}`)
+        commit('setUsers', res.data)
+      } finally {
+        commit('setScreenLoading', false)
+      }
+    }
+  },
   modules: {}
 })

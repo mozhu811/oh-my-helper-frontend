@@ -32,7 +32,7 @@
       </v-btn>
     </div>
 
-    <div class="mt-5 d-flex">
+    <div class="ma-3">
       <v-row>
         <v-col cols="12" xs="12" sm="6" md="4" lg="3" xl="2" v-for="(item, i) in users.records" :key="i">
           <card :item="item"></card>
@@ -359,7 +359,7 @@
 <script>
 import Vue from 'vue'
 import Card from '@/components/Card'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   components: {
@@ -470,7 +470,7 @@ export default {
     this.listUsers(this.pageInfo)
   },
   methods: {
-    ...mapMutations(['listUsers']),
+    ...mapActions(['listUsers']),
     createTask () {
       const valid = this.$refs.createTaskForm.validate()
       if (valid) {
@@ -526,7 +526,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['user', 'users', 'screenLoading', 'configId', 'cols'])
+    ...mapState(['user', 'users', 'screenLoading', 'cols'])
   }
 }
 </script>

@@ -11,6 +11,7 @@
     >
       <v-img
         :src="avatarUrl"
+        max-height="300"
       >
         <template v-slot:placeholder>
           <v-row
@@ -225,7 +226,7 @@ export default {
 
 .seal-text {
   position: absolute;
-  top: 50%;
+  top: 75%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-45deg);
   text-align: center;

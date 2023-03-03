@@ -16,8 +16,6 @@
       color="#f0945d"
       app
       hide-overlay
-      bottom
-      permanent
       dark
     >
       <v-list-item class="px-2">
@@ -170,7 +168,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 const ONE_MONTH = 60 * 60 * 24 * 31
 export default {
@@ -227,7 +225,8 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(['setUser', 'listUsers', 'setCols']),
+    ...mapMutations(['setUser', 'setCols']),
+    ...mapActions(['listUsers']),
     async getQrCode () {
       this.overdue = false
       await this.axios.get('bilibili/qrCode').then(res => {

@@ -28,15 +28,14 @@ axios.interceptors.response.use(
   },
   (error) => {
     // 如果请求错误，则跳转到error页面
-    if (error.response.data.path === '/bilibili/users') {
-      router.push({
-        name: 'error',
-        params: {
-          message: error.message,
-          status: error.response.status
-        }
-      })
-    }
+
+    router.push({
+      name: 'error',
+      params: {
+        message: error.message,
+        status: error.response.status
+      }
+    })
     return Promise.reject(error)
   }
 )
