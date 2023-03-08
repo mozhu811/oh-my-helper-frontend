@@ -55,7 +55,6 @@
           </div>
 
           <v-card tile elevation="0">
-            <v-card-text class="text-center">
               <div v-if="isQr" class="qrcode-login">
                 <div class="qrcode-con">
                   <i class="tv-icon"/>
@@ -76,7 +75,7 @@
                              :src="qrCode"/>
                     </div>
                     <div class="status" v-if="overdue" @click.stop="getQrCode">
-                      <div class="overdue">立即刷新</div>
+                      <div class="overdue"><span class="text-sm-h6">刷新</span></div>
                     </div>
                   </div>
                   <div class="qrcode-footer">
@@ -116,10 +115,9 @@
                   <v-btn>登录</v-btn>
                 </v-card-actions>
               </div>
-            </v-card-text>
           </v-card>
-          <h6 style="font-weight: 600" class="text-h6 text-sm-h6 text--primary d-flex">扫码后自动登录并配置默认参数
-            <a class="v-btn pl-2" @click="toRoute('/')">跳过登录</a>
+          <h6 style="font-weight: 600" class="text-h6 text-sm-h6 text--primary d-flex pt-3">扫码后自动登录并配置默认参数
+            <a class="v-btn pl-2" @click="toRoute('/')">先进去看看</a>
           </h6>
         </div>
       </v-col>
