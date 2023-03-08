@@ -23,13 +23,13 @@ export default {
   },
   computed: {
     colorStartHex: function () {
-      return '#' + this.colorStart.toString(16)
+      return '#' + this.colorStart.toString(16).padStart(6, '0')
     },
     colorEndHex: function () {
-      return '#' + this.colorEnd.toString(16)
+      return '#' + this.colorEnd.toString(16).padStart(6, '0')
     },
     colorBorderHex: function () {
-      return '#' + this.colorBorder.toString(16)
+      return '#' + this.colorBorder.toString(16).padStart(6, '0')
     }
   }
 }
