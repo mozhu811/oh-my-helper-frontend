@@ -6,6 +6,7 @@
       dark
       shaped
       max-width="400"
+      min-width="300"
       transition="scale-transition"
       @mouseleave.stop="show=false"
     >
@@ -28,8 +29,9 @@
       </v-img>
       <v-list-item three-line>
         <v-list-item-content>
-          <div class="mb-4 text-md-h6">
-            <span class="card-title" style="font-weight: bold">{{ username }}</span>
+          <div class="d-flex mb-4 text-md-h6 align-center">
+            <span class="card-title pr-2" style="font-weight: bold">{{ username }}</span>
+            <v-img v-if="item.vipStatus > 0"  contain max-width="80" max-height="24" :src="vipLabel"></v-img>
           </div>
           <v-list-item-title class="mb-1">
             <div v-if="item.medals && JSON.parse(item.medals).length > 0" style="display: flex">
@@ -182,9 +184,6 @@ export default {
       return 'https://bilibili-cruii-io-1251547651.cos.ap-chengdu.myqcloud.com/avatars/' + this.item.dedeuserid + '.png'
     },
     username: function () {
-      // if (this.countChar(this.item.username) >= 14) {
-      //   return this.item.username.substr(0, 7) + '..'
-      // }
       return this.item.username
     },
     activeLogBtn: function () {
@@ -196,16 +195,15 @@ export default {
     },
     backgroundStyle: function () {
       if (this.item.isLogin) {
-        // if (this.item.level === 6) {
         return 'background-image: linear-gradient(315deg, #fc6076 0%, #ff9a44 100%);' +
           // 'box-shadow' + this.boxShadow
           'box-shadow: 0px 10px 20px #e74e34;'
-        // }
-        // return 'background-color: #f794a4;background-image: linear-gradient(315deg, #f794a4 0%, #fdd6bd 100%);' +
-        //   'box-shadow: 0px 10px 20px #fdd6bd;'
       }
       return 'background-color: #9E9E9E;background: linear-gradient(to bottom right, #9E9E9E, #424242);' +
         'box-shadow: 0px 10px 20px #424242;'
+    },
+    vipLabel: function () {
+      return `/images/${this.item.vipLabelTheme}.png`
     }
   }
 }
