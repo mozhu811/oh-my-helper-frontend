@@ -7,23 +7,6 @@ body {
 .v-application .text-md-h6{
   font-family: 'PingFang SC', sans-serif !important;
 }
-// 将v-switch的label放到开关的前面
-.v-input--reverse .v-input__slot {
-  flex-direction: row-reverse;
-  justify-content: flex-end;
-  .v-application--is-ltr & {
-    .v-input--selection-controls__input {
-      margin-right: 0;
-      margin-left: 8px;
-    }
-  }
-  .v-application--is-rtl & {
-    .v-input--selection-controls__input {
-      margin-left: 0;
-      margin-right: 8px;
-    }
-  }
-}
 
 .qrcode-login {
   position: relative;
@@ -79,11 +62,14 @@ body {
   text-align: center;
 }
 
-.qrcode-footer {
-  width: 480px;
-  height: 155px;
-  background: url(https://cruii.io/upload/2021/08/2233login.af9c53d-9e4402a8f4274b5faf8fc2abf534846c.png) 0 -7px no-repeat;
+@media screen and (min-width: 1530px){
+  .qrcode-footer {
+    width: 480px;
+    height: 155px;
+    background: url(https://cruii.io/upload/2021/08/2233login.af9c53d-9e4402a8f4274b5faf8fc2abf534846c.png) 0 -7px no-repeat;
+  }
 }
+
 .status-txt {
   padding-top: 20px;
   text-align: center;

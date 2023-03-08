@@ -50,14 +50,14 @@
       ></v-pagination>
     </div>
 
-    <v-overlay
+    <v-overlay z-index="1"
       light opacity="0.10" :value="screenLoading">
       <v-progress-circular
         indeterminate
         size="100"
         color="white"
       >
-        <i class="fa-brands fa-bilibili"/>
+        <v-icon>mdi-robot-angry</v-icon>
       </v-progress-circular>
     </v-overlay>
 
@@ -357,7 +357,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import Card from '@/components/Card'
 import { mapActions, mapState } from 'vuex'
 
@@ -459,14 +458,6 @@ export default {
     }
   },
   mounted () {
-    // 在 mounted 钩子中添加事件监听器
-    this.$nextTick(() => {
-      Vue.prototype.$eventBus.$on('requestError', (errorMessage) => {
-        this.hasError = true
-        this.errorMessage = errorMessage
-      })
-    })
-
     this.listUsers(this.pageInfo)
   },
   methods: {
