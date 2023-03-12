@@ -322,7 +322,12 @@ export default {
   font-family: inherit !important;
   text-transform: none !important;
 }
-
+@media (min-width: 1536px){
+  .auth .col-lg-7 {
+    flex: 0 0 66.66%;
+    max-width: 66.66%;
+  }
+}
 @media (min-width: 1536px) {
   .auth .col-lg-5 {
     flex: 0 0 33.33%;
