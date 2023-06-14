@@ -68,6 +68,7 @@
           </v-card>
         </v-menu>
         <v-btn v-if="!user" @click.stop="toRoute('/login')" text>登录</v-btn>
+        <a href="https://beian.miit.gov.cn/">蜀ICP备2022027307号-1</a>
         <v-menu
           v-else
           bottom
