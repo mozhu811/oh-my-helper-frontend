@@ -192,11 +192,6 @@ export default {
         title: 'Coming Soon',
         icon: 'mdi-help-circle-outline',
         route: '/new'
-      },
-      {
-        title: '蜀ICP备2022027307号-1',
-        icon: ''
-        route: '/'
       }
     ],
     mini: true,
